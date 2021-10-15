@@ -1,0 +1,22 @@
+[
+    {
+        "id": 0,
+        "name": "Globant",
+        "role": "Informatica"
+    },
+    {
+        "id": 0,
+        "name": "Infosis",
+        "role": "Consultoria"
+    },
+    {
+        "id": 0,
+        "name": "Avalith",
+        "role": "No se"
+    },
+    {
+        "id": 0,
+        "name": "Recursos",
+        "role": "RRHH"
+    }
+]
