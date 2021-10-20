@@ -9,7 +9,7 @@ class CompanyController {
 
 	private $companyDAO;
 
-	public function __construct(){
+	public function __construct() {
 		$this->companyDAO = new CompanyDAO();
 	}
 
@@ -24,17 +24,37 @@ class CompanyController {
 		require_once(VIEWS_PATH . 'company-add.php');
 	}
 
-	public function add($name,$role){
+	public function showViewEditCompany($companyCuit){
 
-		$company = new Company();
-
-		$company->setId(0);
-		$company->setName($name);
-		$company->setRole($role);
-
-		$this->companyDAO->add($company);
-
-		$this->showCompaniesView();
+		$company = $this->companyDAO->getByCuit($companyCuit);
+		
+		require_once(VIEWS_PATH . 'company-edit.php');
 	}
 
+	public function add($cuit, $name, $role, $active = false) {
+
+		if ($this->companyDAO->getByCuit($cuit) == null) {
+			
+			$company = new Company();
+
+			$company->setId(count($this->companyDAO->getAll()));
+			$company->setCuit($cuit);
+			$company->setName($name);
+			$company->setRole($role);
+			$company->setActive(($active == "true")?true:false);
+
+			$this->companyDAO->add($company);
+
+			$this->showCompaniesView();
+		}
+	}
+
+	public function executeEditCompany($cuit, $name, $role, $active){
+
+		$companyToEdit = $this->companyDAO->getByCuit($cuit);
+
+		$companyToEdit->setName($name);
+		$companyToEdit->setRole($role);
+		$companyToEdit->setActive($active);
+	}
 }

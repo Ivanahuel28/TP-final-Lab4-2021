@@ -18,6 +18,7 @@ class CompanyDAO implements IntfCompanyDAO {
 
 		return $this->companiesList;
 	}
+
 	public function add(Company $company) {
 
 		$this->retrieveData();
@@ -27,15 +28,47 @@ class CompanyDAO implements IntfCompanyDAO {
 		$this->saveData();
 	}
 
+	public function getByCuit($cuit) {
+		
+		$this->retrieveData();
+
+		$companyToReturn = null;
+
+		//foreach($this->companiesList as $company){
+			while(!$companyToReturn &&  )
+
+			if($cuit === $company->getCuit()){
+				$companyToReturn = $company;
+			}
+		}
+
+		return $companyToReturn;
+	}
+
+	public function modifyById($id){
+			
+		$this->retrieveData();
+
+		$flag = false;
+
+		foreach($this->companiesList as $company){
+			if($cuit === $company->getCuit()){
+				$companyToReturn = $company;
+			}
+		}
+	}
+
 	private function saveData() {
 
 		$arrayToEncode = array();
 
 		foreach ($this->companiesList as $company) {
-			/* Company  	[ Id, name, role ] */
+			/* Company  	[ Id,, cuit, name, role ] */
 			$valuesArray["id"] = $company->getId();
+			$valuesArray["cuit"] = $company->getCuit();
 			$valuesArray["name"] = $company->getName();
 			$valuesArray["role"] = $company->getRole();
+			$valuesArray["active"] = $company->getActive();
 
 			array_push($arrayToEncode, $valuesArray);
 		}
@@ -57,8 +90,10 @@ class CompanyDAO implements IntfCompanyDAO {
 			foreach ($arrayToDecode as $valuesArray) {
 				$company = new Company();
 				$company->setId($valuesArray['id']);
+				$company->setCuit($valuesArray['cuit']);
 				$company->setName($valuesArray['name']);
 				$company->setRole($valuesArray['role']);
+				$company->setActive($valuesArray['active']);
 
 				array_push($this->companiesList, $company);
 			}

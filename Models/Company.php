@@ -5,8 +5,10 @@ namespace Models;
 class Company {
 
 	private $id;
+	private $cuit;
 	private $name;
 	private $role;
+	private $active;
 
 	public function __construct() {
 	}
@@ -33,5 +35,25 @@ class Company {
 
 	public function setRole($role) {
 		$this->role = $role;
+	}
+
+	public function getActive()
+	{
+		return $this->active;
+	}
+  
+	public function setActive($active)
+	{
+		$this->active = $active;
+	}
+
+	public function getCuit()
+	{
+		return $this->cuit;
+	}
+  
+	public function setCuit($cuit)
+	{
+		$this->cuit = $cuit;
 	}
 }

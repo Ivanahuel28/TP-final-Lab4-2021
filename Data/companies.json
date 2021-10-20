@@ -1,22 +1,23 @@
 [
     {
         "id": 0,
-        "name": "Globant",
-        "role": "Informatica"
+        "cuit": "111",
+        "name": "hola",
+        "role": "Informatica",
+        "active": true
     },
     {
-        "id": 0,
-        "name": "Infosis",
-        "role": "Consultoria"
-    },
-    {
-        "id": 0,
+        "id": 1,
+        "cuit": "333",
         "name": "Avalith",
-        "role": "No se"
+        "role": "Informatica",
+        "active": false
     },
     {
-        "id": 0,
-        "name": "Recursos",
-        "role": "RRHH"
+        "id": 2,
+        "cuit": "666",
+        "name": "Andreani",
+        "role": "RRHH",
+        "active": true
     }
 ]
