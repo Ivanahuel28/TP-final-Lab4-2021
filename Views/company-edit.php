@@ -6,14 +6,10 @@ require_once('nav.php');
 </div>
 
 <div class="container w-50 p-4 m-auto border border-2 rounded-3">
-	<form action="<?php echo FRONT_ROOT ?>Company/add" method="POST" class="justify-content-center">
+	<form action="<?php echo FRONT_ROOT ?>Company/executeEditCompany" method="post" class="justify-content-center">
 		<div class="mb-3">
 			<label for="formGroupExampleInput" class="form-label">Cuit *</label>
 			<input type="number" name="cuit" value="<?php echo $company->getCuit() ?>" class="form-control w-10" id="formGroupExampleInput" readonly>
-			<!-- <p>-</p>
-			<input type="number" name="name" class="form-control" id="formGroupExampleInput" required>
-			<p>-</p>
-			<input type="number" name="name" class="form-control" id="formGroupExampleInput" required> -->
 		</div>
 		<div class="mb-3">
 			<label for="formGroupExampleInput" class="form-label">Nombre</label>
@@ -29,7 +25,10 @@ require_once('nav.php');
 		</div>
 		<div class="form-group d-flex justify-content-end">
 			<div >
-				<a type="submit" class="btn btn-info m-2 p-auto">Editar</a>
+				<button type="submit"  class="btn btn-info m-2 p-auto">Aplicar cambios</button>
+			</div>
+			<div >
+				<a type="submit" href="<?php echo FRONT_ROOT ?>Company/executeDeleteCompany/<?php echo $company->getCuit() ?>" class="btn btn-danger m-2 p-auto">Eliminar</a>
 			</div>
 			<div >
 				<a type="submit" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView" class="btn btn-secondary m-2 p-auto">Cancelar</a>

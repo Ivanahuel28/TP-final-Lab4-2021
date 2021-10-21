@@ -8,5 +8,6 @@ interface IntfCompanyDAO{
 	public function getAll();
 	public function add(Company $company);
 	public function getByCuit($cuit);
-	public function modifyById($id);
+	public function update(Company $company);
+	public function delete($cuit);
 }

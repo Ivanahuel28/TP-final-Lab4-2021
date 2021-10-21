@@ -1,23 +1,9 @@
 [
     {
-        "id": 0,
+        "id": null,
         "cuit": "111",
-        "name": "hola",
-        "role": "Informatica",
-        "active": true
-    },
-    {
-        "id": 1,
-        "cuit": "333",
-        "name": "Avalith",
-        "role": "Informatica",
-        "active": false
-    },
-    {
-        "id": 2,
-        "cuit": "666",
         "name": "Andreani",
-        "role": "RRHH",
-        "active": true
+        "role": "Informatica",
+        "active": "true"
     }
 ]

@@ -24,24 +24,24 @@ class CompanyController {
 		require_once(VIEWS_PATH . 'company-add.php');
 	}
 
-	public function showViewEditCompany($companyCuit){
+	public function showViewEditCompany($companyCuit) {
 
 		$company = $this->companyDAO->getByCuit($companyCuit);
-		
+
 		require_once(VIEWS_PATH . 'company-edit.php');
 	}
 
 	public function add($cuit, $name, $role, $active = false) {
 
 		if ($this->companyDAO->getByCuit($cuit) == null) {
-			
+
 			$company = new Company();
 
 			$company->setId(count($this->companyDAO->getAll()));
 			$company->setCuit($cuit);
 			$company->setName($name);
 			$company->setRole($role);
-			$company->setActive(($active == "true")?true:false);
+			$company->setActive(($active == "true") ? true : false);
 
 			$this->companyDAO->add($company);
 
@@ -49,12 +49,23 @@ class CompanyController {
 		}
 	}
 
-	public function executeEditCompany($cuit, $name, $role, $active){
+	public function executeEditCompany($cuit, $name, $role, $active = false) {
 
-		$companyToEdit = $this->companyDAO->getByCuit($cuit);
-
+		$companyToEdit = new Company();
+		$companyToEdit->setCuit($cuit);
 		$companyToEdit->setName($name);
 		$companyToEdit->setRole($role);
 		$companyToEdit->setActive($active);
+
+		$this->companyDAO->update($companyToEdit);
+
+		$this->showCompaniesView();
+	}
+
+	public function executeDeleteCompany($cuit) {
+
+		$this->companyDAO->delete($cuit);
+
+		$this->showCompaniesView();
 	}
 }

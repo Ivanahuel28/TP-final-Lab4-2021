@@ -23,39 +23,71 @@ class CompanyDAO implements IntfCompanyDAO {
 
 		$this->retrieveData();
 
-		array_push($this->companiesList,$company);
+		array_push($this->companiesList, $company);
 
 		$this->saveData();
 	}
 
 	public function getByCuit($cuit) {
-		
+
 		$this->retrieveData();
 
 		$companyToReturn = null;
+		$i = 0;
 
-		//foreach($this->companiesList as $company){
-			while(!$companyToReturn &&  )
-
-			if($cuit === $company->getCuit()){
-				$companyToReturn = $company;
+		while (!$companyToReturn && $i < count($this->companiesList)) {
+			if ($cuit === $this->companiesList[$i]->getCuit()) {
+				$companyToReturn = $this->companiesList[$i];
+			} else {
+				$i++;
 			}
 		}
 
 		return $companyToReturn;
 	}
 
-	public function modifyById($id){
-			
+	public function update(Company $company) {
+
 		$this->retrieveData();
 
-		$flag = false;
+		$index = $this->getIndexByCuit($company->getCuit());
 
-		foreach($this->companiesList as $company){
-			if($cuit === $company->getCuit()){
-				$companyToReturn = $company;
+		if ($index !== false) {
+			$this->companiesList[$index] = $company;
+		}
+
+		$this->saveData();
+	}
+
+	public function delete($cuit)
+	{
+		$this->retrieveData();
+
+		$index = $this->getIndexByCuit($cuit);
+
+		if ($index !== false) {
+			unset($this->companiesList[$index]);
+
+			$this->saveData();
+		}		
+	}
+
+	private function getIndexByCuit($cuit) {
+
+		$this->retrieveData();
+
+		$i = 0;
+		$index = false;
+
+		while (($index === false) && ($i < count($this->companiesList))) {
+			if ($cuit === $this->companiesList[$i]->getCuit()) {
+				$index = $i;
+			} else {
+				$i++;
 			}
 		}
+
+		return $index;
 	}
 
 	private function saveData() {

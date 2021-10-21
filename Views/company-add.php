@@ -6,7 +6,7 @@ require_once('nav.php');
 </div>
 
 <div class="container w-50 p-4 m-auto border border-2 rounded-3">
-	<form  class="justify-content-center">
+	<form action="<?php echo FRONT_ROOT ?>Company/add" method="POST"  class="justify-content-center">
 		<div class="mb-3">
 			<label for="formGroupExampleInput" class="form-label">Cuit *</label>
 			<input type="number" name="cuit" class="form-control w-10" id="formGroupExampleInput" min="0" max="99999999999" required>
@@ -29,7 +29,7 @@ require_once('nav.php');
 		</div>
 		<div class="form-group d-flex justify-content-end">
 			<div >
-				<a type="submit" href="<?php echo FRONT_ROOT ?>Company/add" class="btn btn-primary m-2 p-auto">Agregar</a>
+				<button type="submit" class="btn btn-primary m-2 p-auto">Agregar</button>
 			</div>
 			<div >
 				<a type="submit" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView" class="btn btn-secondary m-2 p-auto">Cancelar</a>
