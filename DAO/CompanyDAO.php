@@ -19,6 +19,19 @@ class CompanyDAO implements IntfCompanyDAO {
 		return $this->companiesList;
 	}
 
+	public function getAllActives(){
+		
+		$companiesToReturn = array();
+
+		foreach($this->getAll() as $company){
+			if($company->getActive() === true){
+				array_push($companiesToReturn,$company);
+			}
+		}
+
+		return $companiesToReturn;
+	}
+
 	public function add(Company $company) {
 
 		$this->retrieveData();
@@ -53,6 +66,7 @@ class CompanyDAO implements IntfCompanyDAO {
 		$index = $this->getIndexByCuit($company->getCuit());
 
 		if ($index !== false) {
+			$company->setId($this->companiesList[$index]->getId());
 			$this->companiesList[$index] = $company;
 		}
 

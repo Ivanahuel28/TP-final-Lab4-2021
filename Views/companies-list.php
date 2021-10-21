@@ -51,7 +51,10 @@ require_once('nav.php');
 
 
 
-	<!-- Button trigger modal -->
+	
+</div>
+
+<!-- Button trigger modal -->
 	<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
 		Launch demo modal
 	</button> -->
@@ -74,4 +77,3 @@ require_once('nav.php');
 			</div>
 		</div>
 	</div> -->
-</div>

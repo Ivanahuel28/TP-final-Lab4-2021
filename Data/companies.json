@@ -1,16 +1,16 @@
 [
     {
-        "id": null,
+        "id": 0,
         "cuit": "111",
-        "name": "Andreani",
-        "role": "Distribuci\u00f3n",
-        "active": "true"
+        "name": "Infosis",
+        "role": "RRHH",
+        "active": false
     },
     {
         "id": 1,
         "cuit": "222",
-        "name": "Avalith",
-        "role": "Consultoria",
+        "name": "Andreani",
+        "role": "123",
         "active": true
     }
 ]
