@@ -3,7 +3,14 @@
         "id": null,
         "cuit": "111",
         "name": "Andreani",
-        "role": "Informatica",
+        "role": "Distribuci\u00f3n",
         "active": "true"
+    },
+    {
+        "id": 1,
+        "cuit": "222",
+        "name": "Avalith",
+        "role": "Consultoria",
+        "active": true
     }
 ]

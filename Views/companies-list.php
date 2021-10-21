@@ -9,7 +9,7 @@ require_once('nav.php');
 			</button>
 		</a>
 	</div>
-	<div class="container-fluid mt-5 w-75 ">
+	<div class="container-fluid mt-3 w-75 ">
 		<?php
 		if (count($companiesList) != 0) {
 			foreach ($companiesList as $company) { ?>
