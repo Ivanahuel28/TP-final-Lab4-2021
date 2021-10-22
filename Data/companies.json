@@ -4,7 +4,7 @@
         "cuit": "111",
         "name": "Infosis",
         "role": "RRHH",
-        "active": false
+        "active": true
     },
     {
         "id": 1,
@@ -18,6 +18,13 @@
         "cuit": "333",
         "name": "Recursos Desac",
         "role": "No se",
+        "active": false
+    },
+    {
+        "id": 3,
+        "cuit": "555",
+        "name": "Globant",
+        "role": "Informatica",
         "active": true
     }
 ]
