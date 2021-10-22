@@ -12,5 +12,12 @@
         "name": "Andreani",
         "role": "123",
         "active": true
+    },
+    {
+        "id": 2,
+        "cuit": "333",
+        "name": "Recursos Desac",
+        "role": "No se",
+        "active": true
     }
 ]

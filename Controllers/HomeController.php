@@ -14,8 +14,12 @@ class HomeController {
 			require_once(VIEWS_PATH . "admin-home.php");
 		} else {
 
-			$_SESSION['user'] = 'user';
-			require_once(VIEWS_PATH . "student-home.php");
+			$_SESSION['user'] = $user;
+			$this->GoToStudentHome();
 		}
+	}
+
+	public function GoToStudentHome(){
+		require_once(VIEWS_PATH.'student-home.php');
 	}
 }
