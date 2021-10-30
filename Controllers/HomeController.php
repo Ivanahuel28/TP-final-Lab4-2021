@@ -5,6 +5,7 @@ namespace Controllers;
 use Utils\ErrorModal;
 
 class HomeController {
+
 	public function Index($message = "") {
 
 		if($_SESSION){

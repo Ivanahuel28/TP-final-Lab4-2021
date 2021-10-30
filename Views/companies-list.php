@@ -9,7 +9,7 @@ require_once('nav.php');
 			</button>
 		</a>
 	</div>
-	<div class="container-fluid mt-5 w-75 ">
+	<div class="container-fluid mt-3 w-75 ">
 		<?php
 		if (count($companiesList) != 0) {
 			foreach ($companiesList as $company) { ?>
@@ -51,7 +51,10 @@ require_once('nav.php');
 
 
 
-	<!-- Button trigger modal -->
+	
+</div>
+
+<!-- Button trigger modal -->
 	<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
 		Launch demo modal
 	</button> -->
@@ -74,4 +77,3 @@ require_once('nav.php');
 			</div>
 		</div>
 	</div> -->
-</div>

@@ -1,9 +1,30 @@
 [
     {
-        "id": null,
+        "id": 0,
         "cuit": "111",
+        "name": "Infosis",
+        "role": "RRHH",
+        "active": true
+    },
+    {
+        "id": 1,
+        "cuit": "222",
         "name": "Andreani",
+        "role": "123",
+        "active": true
+    },
+    {
+        "id": 2,
+        "cuit": "333",
+        "name": "Recursos Desac",
+        "role": "No se",
+        "active": false
+    },
+    {
+        "id": 3,
+        "cuit": "555",
+        "name": "Globant",
         "role": "Informatica",
-        "active": "true"
+        "active": true
     }
 ]

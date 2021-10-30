@@ -20,6 +20,13 @@ class CompanyController {
 		require_once(VIEWS_PATH . 'companies-list.php');
 	}
 
+	public function showCompaniesViewForStudent() {
+
+		$companiesList = $this->companyDAO->getAllActives();
+
+		require_once(VIEWS_PATH . 'student-companies-list.php');
+	}
+
 	public function showAddView() {
 		require_once(VIEWS_PATH . 'company-add.php');
 	}
@@ -29,6 +36,12 @@ class CompanyController {
 		$company = $this->companyDAO->getByCuit($companyCuit);
 
 		require_once(VIEWS_PATH . 'company-edit.php');
+	}
+
+	public function showViewCompanyInfo($companyCuit){
+		$company = $this->companyDAO->getByCuit($companyCuit);
+
+		require_once(VIEWS_PATH.'company-info.php');
 	}
 
 	public function add($cuit, $name, $role, $active = false) {
@@ -55,7 +68,7 @@ class CompanyController {
 		$companyToEdit->setCuit($cuit);
 		$companyToEdit->setName($name);
 		$companyToEdit->setRole($role);
-		$companyToEdit->setActive($active);
+		$companyToEdit->setActive(($active == "true") ? true : false);
 
 		$this->companyDAO->update($companyToEdit);
 
