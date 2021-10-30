@@ -2,20 +2,27 @@
 
 namespace Controllers;
 
+use Utils\ErrorModal;
+
 class HomeController {
 
 	public function Index($message = "") {
-		require_once(VIEWS_PATH . "login.php");
-	}
 
-	public function Login($user) {
+		if($_SESSION){
 
-		if ($user === "admin") {
-			require_once(VIEWS_PATH . "admin-home.php");
-		} else {
+			echo "session iniciada";
 
-			$_SESSION['user'] = $user;
-			$this->GoToStudentHome();
+			var_dump($_SESSION);
+
+			var_dump($message);
+
+			$errorModal = new ErrorModal();
+
+			$errorModal->echoModal($message);
+
+			session_destroy();
+		}else{
+			header('Location: Login/renderLoginView');
 		}
 	}
 
