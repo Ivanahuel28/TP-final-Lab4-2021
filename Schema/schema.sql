@@ -1,3 +1,9 @@
+CREATE DATABASE utnjobs;
+
+-- USE utnjobs
+
+-- creacion de tablas
+
 CREATE TABLE companies(
 	id_company int PRIMARY KEY auto_increment,
 	cuit BIGINT unique,
@@ -8,7 +14,12 @@ CREATE TABLE companies(
 	active BOOL
 );
 
--- DROP TABLE ;
+CREATE TABLE users(
+	id_user mediumint UNSIGNED PRIMARY KEY AUTO_INCREMENT,
+	username varchar(30),
+	password varchar(30),
+	user_type enum('admin','student')	
+);
 
 CREATE TABLE job_offers(
 	id_job_offer MEDIUMINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -22,12 +33,7 @@ CREATE TABLE job_offers(
 	CONSTRAINT fk_company_job_offer FOREIGN KEY (id_company) REFERENCES companies (id_company)	
 );
 
-CREATE TABLE users(
-	id_user mediumint UNSIGNED PRIMARY KEY AUTO_INCREMENT,
-	username varchar(30),
-	password varchar(30),
-	user_type enum('admin','student')	
-);
+
 
 CREATE TABLE students(
 	id_student mediumint UNSIGNED PRIMARY KEY AUTO_INCREMENT,
@@ -53,3 +59,10 @@ CREATE TABLE applications(
 	CONSTRAINT fk_user_application FOREIGN KEY (id_user) REFERENCES users(id_user),
 	CONSTRAINT fk_job_offer_application FOREIGN KEY (id_job_offer) REFERENCES job_offers (id_job_offer)
 );
+
+-- insercion de datos
+
+
+INSERT INTO utnjobs.users (username,password,user_type)
+	VALUES ('admin','123','admin'),('ddouthwaite0@goo.gl','123','student');
+
