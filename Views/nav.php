@@ -8,8 +8,9 @@
 			</ul>
 
 			<div class="text-end">
-				<a type="button" class="btn btn-outline-light me-2" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView">Alumno</a>
+				<a type="button" class="btn btn-outline-light me-2" href="<?php echo FRONT_ROOT ?>">Alumnos</a>
 				<a type="button" class="btn btn-outline-light" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView">Empresas</a>
+				<a type="button" class="btn btn-outline-danger" href="<?php echo FRONT_ROOT ?>Login/logout">Cerrar Sesión</a>
 			</div>
 		</div>
 	</div>
