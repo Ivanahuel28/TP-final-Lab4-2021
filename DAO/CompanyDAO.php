@@ -104,34 +104,63 @@ class CompanyDAO implements IntfCompanyDAO {
 
 	public function getByCuit($cuit) {
 
-		$this->retrieveData();
+		try {
 
-		$companyToReturn = null;
-		$i = 0;
+			$query = "SELECT * FROM " . $this->tableName . " WHERE cuit = " . $cuit;
 
-		while (!$companyToReturn && $i < count($this->companiesList)) {
-			if ($cuit === $this->companiesList[$i]->getCuit()) {
-				$companyToReturn = $this->companiesList[$i];
-			} else {
-				$i++;
-			}
+			$connection = Connection::GetInstance();
+
+			$queryResult = $connection->Execute($query);
+
+			$company = new Company();
+
+			$company->setId($queryResult[0]['id_company']);
+			$company->setName($queryResult[0]['name']);
+			$company->setCuit((int)$queryResult[0]['cuit']);
+			$company->setRole($queryResult[0]['company_role']);
+			$company->setDescription($queryResult[0]['description']);
+			$company->setLink($queryResult[0]['link']);
+			$company->setActive(($queryResult[0]['active'] === "0" ? false : true));
+		} catch (Exception $ex) {
 		}
 
-		return $companyToReturn;
+		return $company;
 	}
 
 	public function update(Company $company) {
 
-		$this->retrieveData();
+		/* UPDATE utnjobs.companies
+		SET description='11111111',company_role='asd'
+		WHERE id_company=1; */
 
-		$index = $this->getIndexByCuit($company->getCuit());
+		try{
+			$query = 'UPDATE ' . $this->tableName .
+			 	' SET
+					name = :name,
+					company_role = :company_role,
+					description = :description,
+					link = :link,
+					active = :active 
+				WHERE id_company = :id';
 
-		if ($index !== false) {
-			$company->setId($this->companiesList[$index]->getId());
-			$this->companiesList[$index] = $company;
+			$connection = Connection::GetInstance();
+
+			
+			$parameters['name'] = $company->getName();
+			$parameters['company_role'] = $company->getRole();
+			$parameters['description'] = ($company->getDescription()) ? $company->getDescription() : "";
+			$parameters['link'] = ($company->getLink()) ? $company->getLink() : "";
+			$parameters['active'] = ($company->getActive())?1:0;
+			$parameters['id'] = $company->getId();
+
+			$connection = Connection::GetInstance();
+
+			$connection->ExecuteNonQuery($query, $parameters);
+
+
+		}catch (Exception $ex) {
+			throw $ex;
 		}
-
-		$this->saveData();
 	}
 
 	public function delete($cuit) {
