@@ -3,42 +3,103 @@
 namespace DAO;
 
 use DAO\IntfCompanyDAO as IntfCompanyDAO;
+use DAO\Connection as Connection;
+use Exception;
 use Models\Company;
 
 class CompanyDAO implements IntfCompanyDAO {
 
-	private $companiesList;
+	//private $companiesList;
+	private $tableName = "companies";
 
 	public function __construct() {
 		$this->companiesList = array();
 	}
 
 	public function getAll() {
-		$this->retrieveData();
 
-		return $this->companiesList;
-	}
+		$companiesList = array();
 
-	public function getAllActives(){
-		
-		$companiesToReturn = array();
+		try {
 
-		foreach($this->getAll() as $company){
-			if($company->getActive() === true){
-				array_push($companiesToReturn,$company);
+			$query = "SELECT * FROM " . $this->tableName;
+
+			$connection = Connection::GetInstance();
+
+			$queryResult = $connection->Execute($query);
+
+			foreach ($queryResult as $element) {
+
+				$company = new Company();
+
+				$company->setId($element['id_company']);
+				$company->setName($element['name']);
+				$company->setCuit((int)$element['cuit']);
+				$company->setRole($element['company_role']);
+				$company->setDescription($element['description']);
+				$company->setLink($element['link']);
+				$company->setActive(($element['active'] === "0" ? false : true));
+
+				array_push($companiesList, $company);
 			}
+		} catch (Exception $ex) {
 		}
 
-		return $companiesToReturn;
+		return $companiesList;
+	}
+
+	public function getAllActives() {
+
+		$companiesList = array();
+
+		try {
+
+			$query = "SELECT * FROM " . $this->tableName . " WHERE active = 1";
+
+			$connection = Connection::GetInstance();
+
+			$queryResult = $connection->Execute($query);
+
+			foreach ($queryResult as $element) {
+
+				$company = new Company();
+
+				$company->setId($element['id_company']);
+				$company->setName($element['name']);
+				$company->setCuit((int)$element['cuit']);
+				$company->setRole($element['company_role']);
+				$company->setDescription($element['description']);
+				$company->setLink($element['link']);
+				$company->setActive(($element['active'] === "0" ? false : true));
+
+				array_push($companiesList, $company);
+			}
+		} catch (Exception $ex) {
+		}
+
+		return $companiesList;
 	}
 
 	public function add(Company $company) {
 
-		$this->retrieveData();
+		try {
+			$query = "INSERT INTO " . $this->tableName .
+				" (cuit, name, company_role,description,link,active)
+			  VALUES (:cuit, :name, :company_role,:description,:link,:active);";
 
-		array_push($this->companiesList, $company);
+			$parameters['cuit'] = $company->getCuit();
+			$parameters['name'] = $company->getName();
+			$parameters['company_role'] = $company->getRole();
+			$parameters['description'] = $company->getDescription();
+			$parameters['link'] = $company->getLink();
+			$parameters['active'] = $company->getActive();
 
-		$this->saveData();
+			$this->connection = Connection::GetInstance();
+
+			$this->connection->ExecuteNonQuery($query, $parameters);
+		} catch (Exception $ex) {
+			throw $ex;
+		}
 	}
 
 	public function getByCuit($cuit) {
@@ -73,8 +134,7 @@ class CompanyDAO implements IntfCompanyDAO {
 		$this->saveData();
 	}
 
-	public function delete($cuit)
-	{
+	public function delete($cuit) {
 		$this->retrieveData();
 
 		$index = $this->getIndexByCuit($cuit);
@@ -83,7 +143,7 @@ class CompanyDAO implements IntfCompanyDAO {
 			unset($this->companiesList[$index]);
 
 			$this->saveData();
-		}		
+		}
 	}
 
 	private function getIndexByCuit($cuit) {
@@ -104,12 +164,12 @@ class CompanyDAO implements IntfCompanyDAO {
 		return $index;
 	}
 
-	private function saveData() {
+	/* private function saveData() {
 
 		$arrayToEncode = array();
 
 		foreach ($this->companiesList as $company) {
-			/* Company  	[ Id,, cuit, name, role ] */
+			
 			$valuesArray["id"] = $company->getId();
 			$valuesArray["cuit"] = $company->getCuit();
 			$valuesArray["name"] = $company->getName();
@@ -144,5 +204,5 @@ class CompanyDAO implements IntfCompanyDAO {
 				array_push($this->companiesList, $company);
 			}
 		}
-	}
+	} */
 }

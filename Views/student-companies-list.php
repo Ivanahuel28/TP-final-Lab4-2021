@@ -1,5 +1,5 @@
 <?php
-require_once('student-nav.php');
+require_once('nav.php');
 ?>
 <div class="container p-3">
 	<div class="container">

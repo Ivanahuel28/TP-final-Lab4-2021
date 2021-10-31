@@ -8,6 +8,8 @@ class Company {
 	private $cuit;
 	private $name;
 	private $role;
+	private $description;
+	private $link;
 	private $active;
 
 	public function __construct() {
@@ -55,5 +57,25 @@ class Company {
 	public function setCuit($cuit)
 	{
 		$this->cuit = $cuit;
+	}
+
+	public function getDescription()
+	{
+		return $this->description;
+	}
+  
+	public function setDescription($description)
+	{
+		$this->description = $description;
+	}
+
+	public function getLink()
+	{
+		return $this->link;
+	}
+  
+	public function setLink($link)
+	{
+		$this->link = $link;
 	}
 }

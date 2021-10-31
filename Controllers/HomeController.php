@@ -17,7 +17,7 @@ class HomeController {
 			}
 			
 		}else{
-			header('Location: Login/renderLoginView');
+			header('Location: Session/renderLoginView');
 		}
 	}
 

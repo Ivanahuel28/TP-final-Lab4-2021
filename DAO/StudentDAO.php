@@ -27,7 +27,7 @@ class StudentDAO implements IntfStudentDAO {
 		$i = 0;
 
 		while (!$studentToReturn && $i < count($this->studentList)) {
-			if ($email === $this->studentList[$i]->getEmail()) {
+			if ($email->getUsername() === $this->studentList[$i]->getEmail()) {
 				$studentToReturn = $this->studentList[$i];
 			} else {
 				$i++;

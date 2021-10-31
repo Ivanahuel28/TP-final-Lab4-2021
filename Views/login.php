@@ -1,15 +1,15 @@
 <body class="text-center w-25 mx-auto mt-5">
 
 	<main class="form-signin">
-		<form action="<?php echo FRONT_ROOT ?>Login/loginRequest" method="POST">
+		<form action="<?php echo FRONT_ROOT ?>Session/loginRequest" method="POST">
 			
-			<h1 class="h3 mb-3 fw-normal">UTN Jobs</h1>
+			<h1 class="h3 my-5 fw-normal">UTN Jobs</h1>
 
 			<div class="m-1 mt-5">
-				<label for="floatingInput"><strong>Ingrese su correo</strong></label>
+				<label for="floatingInput"><strong>Usuario</strong></label>
 				<input type="text" name="username" class="form-control" id="floatingInput" required>
 			</div>
-			<div class="m-1 mt-5">
+			<div class="m-1 mt-1">
 				<label for="floatingInput"><strong>Contraseña</strong></label>
 				<input type="text" name="password" class="form-control" id="floatingInput" required>
 			</div>

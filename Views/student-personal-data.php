@@ -1,5 +1,5 @@
 <?php
-require_once('student-nav.php');
+require_once('nav.php');
 ?>
 
 <?php if ($student) { ?>
@@ -26,7 +26,7 @@ require_once('student-nav.php');
 			</div>
 			<div class="form-group d-flex justify-content-end">
 				<div>
-					<a type="submit" href="<?php echo FRONT_ROOT ?>Home/GoToStudentHome" class="btn btn-secondary m-2 p-auto">Volver</a>
+					<a type="submit" href="<?php echo FRONT_ROOT ?>Home/Index" class="btn btn-secondary m-2 p-auto">Volver</a>
 				</div>
 			</div>
 		</form>
