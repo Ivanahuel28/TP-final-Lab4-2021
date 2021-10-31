@@ -5,80 +5,112 @@ namespace Controllers;
 use DAO\CompanyDAO as CompanyDAO;
 use Models\Company as Company;
 
-class CompanyController {
+class CompanyController
+{
 
-	private $companyDAO;
+    private $companyDAO;
 
-	public function __construct() {
-		$this->companyDAO = new CompanyDAO();
-	}
+    public function __construct()
+    {
+        $this->companyDAO = new CompanyDAO();
+    }
 
-	public function showCompaniesView() {
+    public function showCompaniesView()
+    {
 
-		$companiesList = $this->companyDAO->getAll();
+        $companiesList = $this->companyDAO->getAll();
 
-		require_once(VIEWS_PATH . 'companies-list.php');
-	}
+        require_once(VIEWS_PATH . 'companies-list.php');
+    }
 
-	public function showCompaniesViewForStudent() {
+    public function showCompaniesViewForStudent()
+    {
 
-		$companiesList = $this->companyDAO->getAllActives();
+        $companiesList = $this->companyDAO->getAllActives();
 
-		require_once(VIEWS_PATH . 'student-companies-list.php');
-	}
+        require_once(VIEWS_PATH . 'student-companies-list.php');
+    }
 
-	public function showAddView() {
-		require_once(VIEWS_PATH . 'company-add.php');
-	}
+    public function showAddView()
+    {
+        require_once(VIEWS_PATH . 'company-add.php');
+    }
 
-	public function showViewEditCompany($companyCuit) {
+    public function showViewEditCompany($companyCuit)
+    {
 
-		$company = $this->companyDAO->getByCuit($companyCuit);
+        $company = $this->companyDAO->getByCuit($companyCuit);
 
-		require_once(VIEWS_PATH . 'company-edit.php');
-	}
+        require_once(VIEWS_PATH . 'company-edit.php');
+    }
 
-	public function showViewCompanyInfo($companyCuit){
-		$company = $this->companyDAO->getByCuit($companyCuit);
+    public function showViewCompanyInfo($companyCuit)
+    {
+        $company = $this->companyDAO->getByCuit($companyCuit);
 
-		require_once(VIEWS_PATH.'company-info.php');
-	}
+        require_once(VIEWS_PATH . 'company-info.php');
+    }
 
-	public function add($cuit, $name, $role, $active = false) {
+    public function add($cuit, $name, $role, $active = false)
+    {
+        $companyByCuit = $this->companyDAO->getByCuit($cuit);
 
-		if ($this->companyDAO->getByCuit($cuit) == null) {
+        if ($companyByCuit == null || $companyByCuit->getCuit() != (int)$cuit) {
+            $company = $this->createCompany($cuit, $name, $role, $active);
+            $this->companyDAO->add($company);
+        } else {
+            $this->showExceptionMsg();
+        }
+        $this->showCompaniesView();
+    }
 
-			$company = new Company();
+    public function executeEditCompany($cuit, $name, $role, $active = false)
+    {
 
-			$company->setId(count($this->companyDAO->getAll()));
-			$company->setCuit($cuit);
-			$company->setName($name);
-			$company->setRole($role);
-			$company->setActive(($active == "true") ? true : false);
+        $companyToEdit = new Company();
+        $companyToEdit->setCuit($cuit);
+        $companyToEdit->setName($name);
+        $companyToEdit->setRole($role);
+        $companyToEdit->setActive(($active == "true") ? true : false);
 
-			$this->companyDAO->add($company);
+        $this->companyDAO->update($companyToEdit);
 
-			$this->showCompaniesView();
-		}
-	}
+        $this->showCompaniesView();
+    }
 
-	public function executeEditCompany($cuit, $name, $role, $active = false) {
+    public function executeDeleteCompany($cuit)
+    {
 
-		$companyToEdit = new Company();
-		$companyToEdit->setCuit($cuit);
-		$companyToEdit->setName($name);
-		$companyToEdit->setRole($role);
-		$companyToEdit->setActive(($active == "true") ? true : false);
+        $this->companyDAO->delete($cuit);
 
-		$this->companyDAO->update($companyToEdit);
+        $this->showCompaniesView();
+    }
 
-		$this->showCompaniesView();
-	}
+    /**
+     * @param $cuit
+     * @param $name
+     * @param $role
+     * @param $active
+     * @return Company
+     */
+    private function createCompany($cuit, $name, $role, $active)
+    {
+        $company = new Company();
 
-	public function executeDeleteCompany($cuit) {
+        $company->setId(count($this->companyDAO->getAll()));
+        $company->setCuit($cuit);
+        $company->setName($name);
+        $company->setRole($role);
+        $company->setActive($active == "true");
+        return $company;
+    }
 
-		$this->companyDAO->delete($cuit);
-
-		$this->showCompaniesView();
-	}
+    private function showExceptionMsg()
+    {
+        echo '
+           <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <strong>Ups!</strong>  La compañia ingresada ya existe.
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>';
+    }
 }
