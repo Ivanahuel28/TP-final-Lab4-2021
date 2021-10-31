@@ -1,5 +1,5 @@
 <?php
-require_once('student-nav.php');
+require_once('nav.php');
 ?>
 <div class="container">
 	<h2 class="my-4 text-center">Informacion de la Empresa:  <strong><?php echo $company->getName() ?></strong> </h2>
