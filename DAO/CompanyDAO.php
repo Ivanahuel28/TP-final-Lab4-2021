@@ -10,13 +10,7 @@ use Models\Company;
 class CompanyDAO implements IntfCompanyDAO
 {
 
-    //private $companiesList;
     private $tableName = "companies";
-
-    public function __construct()
-    {
-        $this->companiesList = array();
-    }
 
     public function getAll()
     {
@@ -91,11 +85,6 @@ class CompanyDAO implements IntfCompanyDAO
 
     public function update(Company $company)
     {
-
-        /* UPDATE utnjobs.companies
-        SET description='11111111',company_role='asd'
-        WHERE id_company=1; */
-
         try {
             $query = "UPDATE " . $this->tableName .
                 " SET
@@ -104,7 +93,7 @@ class CompanyDAO implements IntfCompanyDAO
 					description = :description,
 					link = :link,
 					active = :active 
-				WHERE id_company = :id";
+				WHERE cuit = :cuit";
 
             $this->connection = Connection::GetInstance();
 
@@ -114,7 +103,7 @@ class CompanyDAO implements IntfCompanyDAO
             $parameters['description'] = ($company->getDescription()) ?: "";
             $parameters['link'] = ($company->getLink()) ?: "";
             $parameters['active'] = ($company->getActive()) ? 1 : 0;
-            $parameters['id'] = $company->getId();
+            $parameters['cuit'] = $company->getCuit();
 
             $connection = Connection::GetInstance();
 
@@ -129,14 +118,17 @@ class CompanyDAO implements IntfCompanyDAO
 
     public function delete($cuit)
     {
-        $this->retrieveData();
+        try {
+            $query = "DELETE FROM " . $this->tableName . " WHERE cuit = :cuit";
+            $parameters['cuit'] = $cuit;
 
-        $index = $this->getIndexByCuit($cuit);
+            $this->connection = Connection::GetInstance();
+            $connection = Connection::GetInstance();
+            $connection->ExecuteNonQuery($query, $parameters);
 
-        if ($index !== false) {
-            unset($this->companiesList[$index]);
-
-            $this->saveData();
+        } catch (Exception $ex) {
+            echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            return null;
         }
     }
 
@@ -159,47 +151,6 @@ class CompanyDAO implements IntfCompanyDAO
         return $index;
     }
 
-    /* private function saveData() {
-
-        $arrayToEncode = array();
-
-        foreach ($this->companiesList as $company) {
-
-            $valuesArray["id"] = $company->getId();
-            $valuesArray["cuit"] = $company->getCuit();
-            $valuesArray["name"] = $company->getName();
-            $valuesArray["role"] = $company->getRole();
-            $valuesArray["active"] = $company->getActive();
-
-            array_push($arrayToEncode, $valuesArray);
-        }
-
-        $jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
-
-        file_put_contents('Data/companies.json', $jsonContent);
-    }
-
-    private function retrieveData() {
-
-        $this->companiesList = array();
-
-        if (file_exists('Data/companies.json')) {
-            $jsonContent = file_get_contents('Data/companies.json');
-
-            $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
-
-            foreach ($arrayToDecode as $valuesArray) {
-                $company = new Company();
-                $company->setId($valuesArray['id']);
-                $company->setCuit($valuesArray['cuit']);
-                $company->setName($valuesArray['name']);
-                $company->setRole($valuesArray['role']);
-                $company->setActive($valuesArray['active']);
-
-                array_push($this->companiesList, $company);
-            }
-        }
-    } */
     /**
      * @param $query
      * @param array $companiesList
