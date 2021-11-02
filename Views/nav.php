@@ -1,4 +1,4 @@
-<?php require_once ('validate-session.php')?>
+<?php require_once('validate-session.php') ?>
 
 <header class="p-2 bg-dark text-white">
 	<div class="container">
@@ -15,12 +15,12 @@
 						<li class="nav-item">
 							<a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView"><strong>Empresas</strong> </a>
 						</li>
-                        <li class="nav-item">
+						<li class="nav-item">
 							<a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/createJobOffer"><strong>Crear Oferta</strong> </a>
 						</li>
 
-					<?php
-				} else { ?>
+			<?php }
+			 else { ?>
 						<div class="text-end">
 							<ul class="nav nav-pills nav-fill">
 								<li class="nav-item">
@@ -29,14 +29,14 @@
 								<li class="nav-item">
 									<a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/showCompaniesViewForStudent"><strong>Empresas</strong> </a>
 								</li>
-								
-					<?php
-				} ?>
-					<li class="nav-item">
-						<a class="nav-link alert-danger" href="<?php echo FRONT_ROOT ?>Session/logout"><strong>Cerrar Sesión</strong></a>
-					</li>
-					</ul>
+
+							<?php
+						} ?>
+							<li class="nav-item">
+								<a class="nav-link alert-danger" href="<?php echo FRONT_ROOT ?>Session/logout"><strong>Cerrar Sesión</strong></a>
+							</li>
+							</ul>
+						</div>
 				</div>
 		</div>
-	</div>
 </header>

@@ -132,7 +132,7 @@ class CompanyDAO implements IntfCompanyDAO
         }
     }
 
-    private function getIndexByCuit($cuit)
+    /* private function getIndexByCuit($cuit)
     {
 
         $this->retrieveData();
@@ -149,7 +149,7 @@ class CompanyDAO implements IntfCompanyDAO
         }
 
         return $index;
-    }
+    } */
 
     /**
      * @param $query
