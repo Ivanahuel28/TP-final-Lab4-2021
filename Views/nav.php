@@ -16,7 +16,7 @@
 							<a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView"><strong>Empresas</strong> </a>
 						</li>
 						<li class="nav-item">
-							<a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/createJobOffer"><strong>Crear Oferta</strong> </a>
+							<a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/requestJobOfferList"><strong>Ofertas Laborales</strong> </a>
 						</li>
 
 			<?php }

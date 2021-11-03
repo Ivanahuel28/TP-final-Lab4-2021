@@ -49,6 +49,6 @@ class JobOfferDAO {
 			return null;
 		}
 
-		return $companiesList;
+		return $jobOfferList;
 	}
 }

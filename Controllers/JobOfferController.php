@@ -16,37 +16,47 @@ class JobOfferController {
 		$this->companyDAO = new CompanyDAO();
 	}
 
-	public function createJobOffer() {
-		//TODO: call api when it's working
-		require_once(VIEWS_PATH . 'job-offer-add.php');
-	}
-
-
 	public function add($isRemote, $description, $title, $jobPosition, $career, $companyCuit) {
+
 		$jobOffer = $this->offerFactory($career, $description, $jobPosition, $isRemote, $title);
 
 
 		$companyByCuit = $this->jobOfferDAO->addOffer($jobOffer, $companyCuit);
 	}
 
+	public function renderCreateNewJobOffer(){
+
+		$companiesList = $this->makeAssocArrayByCompanyId($this->companyDAO->getAll());
+
+		$careerAndJobPositionList = $this->getCareersAndJobPositionsStrings();
+
+		require_once(VIEWS_PATH . 'job-offer-create.php');
+
+	}
+
 	public function requestJobOfferList() {
 
 		$jobOfferList = $this->jobOfferDAO->getAll();
 
-		$associatedCompanyList = $this->getIdCompanyNameArray($this->companyDAO->getAll());
+		$companyList = $this->makeAssocArrayByCompanyId($this->companyDAO->getAll());
 
-		$list = array();
+		if(isset($jobOfferList)){
+			foreach ($jobOfferList as $jobOffer) {
 
-		foreach ($jobOfferList as $jobOffer) {
-
-			array_push($list, array(
-				'id_jobOffer' => $jobOffer->getId_jobOffer(),
-				'title' => $jobOffer->getTitle(),
-				'companyName' => $associatedCompanyList[$jobOffer->getCompanyId()]
-			));
+				$list[$jobOffer->getId()] = array(
+					'title'=>$jobOffer->getTitle(),
+					'companyName'=>(isset($companyList[$jobOffer->getCompanyId()]))?$companyList[$jobOffer->getCompanyId()]:""
+				);
+	
+				/* array_push($list, array(
+					'id_jobOffer' => $jobOffer->getId_jobOffer(),
+					'title' => $jobOffer->getTitle(),
+					'companyName' => $associatedCompanyList[$jobOffer->getCompanyId()]
+				)); */
+			}
 		}
 
-		/* $element =  */
+		require_once(VIEWS_PATH . 'job-offer-list.php');
 
 		/*
 		id oferta
@@ -56,7 +66,7 @@ class JobOfferController {
 		 */
 	}
 
-	private function getIdCompanyNameArray($companyList){
+	private function makeAssocArrayByCompanyId($companyList){
 
 		foreach($companyList as $company){
 
@@ -64,12 +74,12 @@ class JobOfferController {
 		}
 
 		return $associatedList;
-
 	}
 
+	public function getCareersAndJobPositionsStrings(){
 
-
-
+		
+	}
 
 	/**
 	 * @param $career
