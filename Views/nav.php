@@ -9,9 +9,9 @@
 			<?php if ($_SESSION['user']->getUserType() === "admin") { ?>
 				<div class="text-end">
 					<ul class="nav nav-pills nav-fill">
-						<li class="nav-item">
+						<!-- <li class="nav-item">
 							<a class="nav-link" aria-current="page" href="<?php echo FRONT_ROOT ?>"><strong>Alumnos</strong></a>
-						</li>
+						</li> -->
 						<li class="nav-item">
 							<a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView"><strong>Empresas</strong> </a>
 						</li>

@@ -42,7 +42,7 @@ class JobPositionDAO implements IntfJobPosition {
 
 				$jobPosition->setId_jobPosition($valuesArray['jobPositionId']);
 				$jobPosition->setId_career($valuesArray['careerId']);
-				$jobPosition->setId_jobPosition($valuesArray['description']);
+				$jobPosition->setDescription($valuesArray['description']);
 
 				array_push($this->jobPositionList, $jobPosition);
 			}

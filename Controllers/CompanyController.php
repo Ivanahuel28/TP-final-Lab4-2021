@@ -109,7 +109,7 @@ class CompanyController
     {
         echo '
            <div class="alert alert-warning alert-dismissible fade show" role="alert">
-                <strong>Ups!</strong>  La compañia ingresada ya existe.
+                <strong>Ups!</strong>  Ya existe una Empresa con ese cuit
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
          </div>';
     }

@@ -9,6 +9,11 @@ class CareerDAO implements IntfCareerDAO {
 
 	private $careerList;
 
+	public function __construct()
+	{
+		$this->careerList = array();
+	}
+
 	public function getAll() {
 		$this->retrieveData();
 

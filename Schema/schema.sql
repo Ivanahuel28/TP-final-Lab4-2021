@@ -34,8 +34,8 @@ CREATE TABLE job_offers(
 	CONSTRAINT fk_company_job_offer FOREIGN KEY (id_company) REFERENCES companies (id_company)	
 );
 
-
 ALTER TABLE job_offers ADD COLUMN title varchar(1000);
+
 
 CREATE TABLE students(
 	id_student mediumint UNSIGNED PRIMARY KEY AUTO_INCREMENT,
