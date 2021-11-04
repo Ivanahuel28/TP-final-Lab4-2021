@@ -26,6 +26,7 @@ CREATE TABLE job_offers(
 	publication_date DATETIME,
 	remote BOOL,
 	description varchar(1000),
+	title varchar(1000),
 	career varchar(30) NOT null,
 	job_position varchar(30) NOT null,
 	active bool,
@@ -33,6 +34,7 @@ CREATE TABLE job_offers(
 	CONSTRAINT fk_company_job_offer FOREIGN KEY (id_company) REFERENCES companies (id_company)	
 );
 
+ALTER TABLE job_offers ADD COLUMN title varchar(1000);
 
 
 CREATE TABLE students(

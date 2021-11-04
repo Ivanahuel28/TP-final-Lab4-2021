@@ -7,202 +7,191 @@ use DAO\Connection as Connection;
 use Exception;
 use Models\Company;
 
-class CompanyDAO implements IntfCompanyDAO {
+class CompanyDAO implements IntfCompanyDAO
+{
 
-	//private $companiesList;
-	private $tableName = "companies";
+    private $tableName = "companies";
 
-	public function __construct() {
-		$this->companiesList = array();
-	}
+    public function getAll()
+    {
+        $companiesList = array();
+        try {
+            $query = "SELECT * FROM " . $this->tableName;
+            $companiesList = $this->getCompaniesList($query, $companiesList);
+        } catch (Exception $ex) {
+            echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            return null;
+        }
 
-	public function getAll() {
+        return $companiesList;
+    }
 
-		$companiesList = array();
+    public function getAllActives()
+    {
+        $companiesList = array();
+        try {
+            $query = "SELECT * FROM " . $this->tableName . " WHERE active = 1";
+            $companiesList = $this->getCompaniesList($query, $companiesList);
+        } catch (Exception $ex) {
+            echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            return null;
+        }
 
-		try {
+        return $companiesList;
+    }
 
-			$query = "SELECT * FROM " . $this->tableName;
+    public function add(Company $company)
+    {
 
-			$connection = Connection::GetInstance();
-
-			$queryResult = $connection->Execute($query);
-
-			foreach ($queryResult as $element) {
-
-				$company = new Company();
-
-				$company->setId($element['id_company']);
-				$company->setName($element['name']);
-				$company->setCuit((int)$element['cuit']);
-				$company->setRole($element['company_role']);
-				$company->setDescription($element['description']);
-				$company->setLink($element['link']);
-				$company->setActive(($element['active'] === "0" ? false : true));
-
-				array_push($companiesList, $company);
-			}
-		} catch (Exception $ex) {
-		}
-
-		return $companiesList;
-	}
-
-	public function getAllActives() {
-
-		$companiesList = array();
-
-		try {
-
-			$query = "SELECT * FROM " . $this->tableName . " WHERE active = 1";
-
-			$connection = Connection::GetInstance();
-
-			$queryResult = $connection->Execute($query);
-
-			foreach ($queryResult as $element) {
-
-				$company = new Company();
-
-				$company->setId($element['id_company']);
-				$company->setName($element['name']);
-				$company->setCuit((int)$element['cuit']);
-				$company->setRole($element['company_role']);
-				$company->setDescription($element['description']);
-				$company->setLink($element['link']);
-				$company->setActive(($element['active'] === "0" ? false : true));
-
-				array_push($companiesList, $company);
-			}
-		} catch (Exception $ex) {
-		}
-
-		return $companiesList;
-	}
-
-	public function add(Company $company) {
-
-		try {
-			$query = "INSERT INTO " . $this->tableName .
-				" (cuit, name, company_role,description,link,active)
+        try {
+            $query = "INSERT INTO " . $this->tableName .
+                " (cuit, name, company_role,description,link,active)
 			  VALUES (:cuit, :name, :company_role,:description,:link,:active);";
 
-			$parameters['cuit'] = $company->getCuit();
-			$parameters['name'] = $company->getName();
-			$parameters['company_role'] = $company->getRole();
-			$parameters['description'] = $company->getDescription();
-			$parameters['link'] = $company->getLink();
-			$parameters['active'] = $company->getActive();
+            $parameters['cuit'] = $company->getCuit();
+            $parameters['name'] = $company->getName();
+            $parameters['company_role'] = $company->getRole();
+            $parameters['description'] = $company->getDescription();
+            $parameters['link'] = $company->getLink();
+            $parameters['active'] = $company->getActive();
 
-			$this->connection = Connection::GetInstance();
+            $this->connection = Connection::GetInstance();
 
-			$this->connection->ExecuteNonQuery($query, $parameters);
-		} catch (Exception $ex) {
-			throw $ex;
-		}
-	}
+            $this->connection->ExecuteNonQuery($query, $parameters);
+        } catch (Exception $ex) {
+            echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            return null;
+        }
+    }
 
-	public function getByCuit($cuit) {
+    public function getByCuit($cuit)
+    {
+        try {
+            $query = "SELECT * FROM " . $this->tableName . " WHERE cuit = " . $cuit;
+            $connection = Connection::GetInstance();
+            $queryResult = $connection->Execute($query);
 
-		$this->retrieveData();
+            $company = new Company();
+            if (!empty($queryResult)) {
+                $this->createCompany($company, $queryResult[0]);
+            }
+        } catch (Exception $ex) {
+            echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            return null;
+        }
 
-		$companyToReturn = null;
-		$i = 0;
+        return $company;
+    }
 
-		while (!$companyToReturn && $i < count($this->companiesList)) {
-			if ($cuit === $this->companiesList[$i]->getCuit()) {
-				$companyToReturn = $this->companiesList[$i];
-			} else {
-				$i++;
-			}
-		}
+    public function update(Company $company)
+    {
+        try {
+            $query = "UPDATE " . $this->tableName .
+                " SET
+					name = :name,
+					company_role = :company_role,
+					description = :description,
+					link = :link,
+					active = :active 
+				WHERE cuit = :cuit";
 
-		return $companyToReturn;
-	}
+            $this->connection = Connection::GetInstance();
 
-	public function update(Company $company) {
 
-		$this->retrieveData();
+            $parameters['name'] = $company->getName();
+            $parameters['company_role'] = $company->getRole();
+            $parameters['description'] = ($company->getDescription()) ?: "";
+            $parameters['link'] = ($company->getLink()) ?: "";
+            $parameters['active'] = ($company->getActive()) ? 1 : 0;
+            $parameters['cuit'] = $company->getCuit();
 
-		$index = $this->getIndexByCuit($company->getCuit());
+            $connection = Connection::GetInstance();
 
-		if ($index !== false) {
-			$company->setId($this->companiesList[$index]->getId());
-			$this->companiesList[$index] = $company;
-		}
+            $connection->ExecuteNonQuery($query, $parameters);
 
-		$this->saveData();
-	}
 
-	public function delete($cuit) {
-		$this->retrieveData();
+        } catch (Exception $ex) {
+            echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            return null;
+        }
+    }
 
-		$index = $this->getIndexByCuit($cuit);
+    public function delete($cuit)
+    {
+        try {
+            $query = "DELETE FROM " . $this->tableName . " WHERE cuit = :cuit";
+            $parameters['cuit'] = $cuit;
 
-		if ($index !== false) {
-			unset($this->companiesList[$index]);
+            $this->connection = Connection::GetInstance();
+            $connection = Connection::GetInstance();
+            $connection->ExecuteNonQuery($query, $parameters);
 
-			$this->saveData();
-		}
-	}
+        } catch (Exception $ex) {
+            echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            return null;
+        }
+    }
 
-	private function getIndexByCuit($cuit) {
+    /* private function getIndexByCuit($cuit)
+    {
 
-		$this->retrieveData();
+        $this->retrieveData();
 
-		$i = 0;
-		$index = false;
+        $i = 0;
+        $index = false;
 
-		while (($index === false) && ($i < count($this->companiesList))) {
-			if ($cuit === $this->companiesList[$i]->getCuit()) {
-				$index = $i;
-			} else {
-				$i++;
-			}
-		}
+        while (($index === false) && ($i < count($this->companiesList))) {
+            if ($cuit === $this->companiesList[$i]->getCuit()) {
+                $index = $i;
+            } else {
+                $i++;
+            }
+        }
 
-		return $index;
-	}
+        return $index;
+    } */
 
-	/* private function saveData() {
+    /**
+     * @param $query
+     * @param array $companiesList
+     * @return array
+     * @throws Exception
+     */
+    private function getCompaniesList($query, array $companiesList)
+    {
+        $connection = Connection::GetInstance();
 
-		$arrayToEncode = array();
+        $queryResult = $connection->Execute($query);
 
-		foreach ($this->companiesList as $company) {
-			
-			$valuesArray["id"] = $company->getId();
-			$valuesArray["cuit"] = $company->getCuit();
-			$valuesArray["name"] = $company->getName();
-			$valuesArray["role"] = $company->getRole();
-			$valuesArray["active"] = $company->getActive();
+        foreach ($queryResult as $element) {
 
-			array_push($arrayToEncode, $valuesArray);
-		}
+            $company = new Company();
 
-		$jsonContent = json_encode($arrayToEncode, JSON_PRETTY_PRINT);
+            $company->setId($element['id_company']);
+            $company->setName($element['name']);
+            $company->setCuit((int)$element['cuit']);
+            $company->setRole($element['company_role']);
+            $company->setDescription($element['description']);
+            $company->setLink($element['link']);
+            $company->setActive(!($element['active'] === "0"));
 
-		file_put_contents('Data/companies.json', $jsonContent);
-	}
+            array_push($companiesList, $company);
+        }
+        return $companiesList;
+    }
 
-	private function retrieveData() {
-
-		$this->companiesList = array();
-
-		if (file_exists('Data/companies.json')) {
-			$jsonContent = file_get_contents('Data/companies.json');
-
-			$arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
-
-			foreach ($arrayToDecode as $valuesArray) {
-				$company = new Company();
-				$company->setId($valuesArray['id']);
-				$company->setCuit($valuesArray['cuit']);
-				$company->setName($valuesArray['name']);
-				$company->setRole($valuesArray['role']);
-				$company->setActive($valuesArray['active']);
-
-				array_push($this->companiesList, $company);
-			}
-		}
-	} */
+    /**
+     * @param Company $company
+     * @param $queryResult
+     */
+    private function createCompany(Company $company, $queryResult)
+    {
+        $company->setId($queryResult['id_company']);
+        $company->setName($queryResult['name']);
+        $company->setCuit((int)$queryResult['cuit']);
+        $company->setRole($queryResult['company_role']);
+        $company->setDescription($queryResult['description']);
+        $company->setLink($queryResult['link']);
+        $company->setActive(!($queryResult['active'] == "0"));
+    }
 }

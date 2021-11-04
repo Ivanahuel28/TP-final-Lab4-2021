@@ -14,7 +14,7 @@
      <script src="<?php echo JS_PATH ?>bootstrap.js"></script>
 
 	 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
-
+    <link rel="icon" href="<?PHP echo IMG_PATH?>/utn.ico" type="image/ico">
 	<title>Framework Example</title>
 </head>
 
