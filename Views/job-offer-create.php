@@ -17,22 +17,30 @@ require_once('nav.php');
 			</select>
 		</div>
 		<div class="mb-3">
+			<label for="formGroupExampleInput" class="form-label">Empresa</label>
+			<select name="id_company" class="form-select" aria-label="Default select example">
+				<?php foreach ($companiesList as $id_company => $companyName) {
+					echo '<option name="id_company" value="' . $id_company . '">' . $companyName . '</option>';
+				}
+				?>
+			</select>
+		</div>
+		<div class="mb-3">
+			<label for="formGroupExampleInput" class="form-label">Empresa</label>
+			<select name="id_company" class="form-select" aria-label="Default select example">
+				<?php foreach ($companiesList as $id_company => $companyName) {
+					echo '<option name="id_company" value="' . $id_company . '">' . $companyName . '</option>';
+				}
+				?>
+			</select>
+		</div>
+		<div class="mb-3">
 			<label for="formGroupExampleInput" class="form-label">Titulo</label>
 			<input type="text" name="title" class="form-control" id="formGroupExampleInput" required>
 		</div>
 		<div class="mb-3">
 			<label for="formGroupExampleInput" class="form-label">Descripcion</label>
 			<textarea type="text" name="description" class="form-control" id="formGroupExampleInput" rows="4" required></textarea>
-		</div>
-		<div class="mb-3">
-			<label for="exampleDataList" class="form-label">Carrera - Posicion</label>
-			<input class="form-control" list="datalistOptions" id="exampleDataList" placeholder="Type to search...">
-			<datalist id="datalistOptions">
-				<?php foreach ($careerAndJobPositionList as $option) {
-					echo '<option name="careerNJobPosition" value="'.$option.'">';
-				}
-				?>
-			</datalist>
 		</div>
 		<div class="form-check form-switch m-3">
 			<input class="form-check-input" name="isRemote" value="true" type="checkbox" id="flexSwitchCheckChecked" checked>

@@ -20,6 +20,22 @@ class CareerDAO implements IntfCareerDAO {
 		return $this->careerList;
 	}
 
+	public function getAllActives(){
+		
+		$this->retrieveData();
+
+		$activesList = array();
+
+		foreach ($this->careerList as $career) {
+			
+			if($career->getActive()){
+				array_push($activesList,$career);
+			}
+		}
+
+		return $activesList;
+	}
+
 	private function retrieveData() {
 
 		$ch = curl_init("https://utn-students-api.herokuapp.com/api/Career");

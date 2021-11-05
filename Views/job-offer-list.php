@@ -3,13 +3,13 @@ require_once('nav.php');
 ?>
 <div class="container p-3">
 	<div class="d-flex mt-2 justify-content-center">
-		<a href="<?php echo FRONT_ROOT ?>JobOffer/renderCreateNewJobOffer">
+		<a href="<?php echo FRONT_ROOT ?>JobOffer/renderView_Create_FirstStep">
 			<button type="submit" class="btn btn-primary">
 				Crear Oferta Laboral
 			</button>
 		</a>
 	</div>
-	<div class="container-fluid mt-3 w-75 ">
+	<!-- <div class="container-fluid mt-3 w-75 ">
 		<?php
 		if (!empty($jobOfferList)) {
 			foreach ($jobOfferList as $id_jobOffer => $jobOffer) { ?>
@@ -49,5 +49,5 @@ require_once('nav.php');
 			</div>
 		<?php
 		} ?>
-	</div>
+	</div> -->
 </div>

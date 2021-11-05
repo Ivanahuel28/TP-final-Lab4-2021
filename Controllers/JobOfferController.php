@@ -6,7 +6,6 @@ use DAO\CareerDAO;
 use DAO\CompanyDAO as CompanyDAO;
 use DAO\JobOfferDAO;
 use DAO\JobPositionDAO;
-use DateTime;
 use Models\JobOffer;
 
 class JobOfferController {
@@ -32,8 +31,8 @@ class JobOfferController {
 
 		if($careerNJobPosition){
 			$careerArray = explode(" - ", $careerNJobPosition);
-		$jobOffer->setCareer($careerArray[0]);
-		$jobOffer->setJobPosition($careerArray[1]);
+			$jobOffer->setCareer($careerArray[0]);
+			$jobOffer->setJobPosition($careerArray[1]);
 		}
 
 		$jobOffer->setRemote($isRemote === "true");
@@ -43,18 +42,25 @@ class JobOfferController {
 		
 	}
 
-	public function renderCreateNewJobOffer() {
+	public function renderView_Create_FirstStep() {
 
-		$companiesList = $this->makeAssocArrayByCompanyId($this->companyDAO->getAll());
+		$companiesList = $this->companyDAO->getAllActives();
 
-		$careerAndJobPositionList = $this->getCareersAndJobPositionsStrings();
+		$careersList = $this->careerDAO->getAllActives();
+
+		require_once(VIEWS_PATH . 'job-offer-create-first-step.php');
+	}
+
+	public function renderView_Create_FinalStep() {
+
+		
 
 		require_once(VIEWS_PATH . 'job-offer-create.php');
 	}
 
 	public function requestJobOfferList() {
 
-		$jobOfferList = $this->jobOfferDAO->getAll();
+		/* $jobOfferList = $this->jobOfferDAO->getAll();
 
 		$companyList = $this->makeAssocArrayByCompanyId($this->companyDAO->getAll());
 
@@ -65,26 +71,13 @@ class JobOfferController {
 					'title' => $jobOffer->getTitle(),
 					'companyName' => (isset($companyList[$jobOffer->getCompanyId()])) ? $companyList[$jobOffer->getCompanyId()] : ""
 				);
-
-				/* array_push($list, array(
-					'id_jobOffer' => $jobOffer->getId_jobOffer(),
-					'title' => $jobOffer->getTitle(),
-					'companyName' => $associatedCompanyList[$jobOffer->getCompanyId()]
-				)); */
 			}
-		}
+		} */
 
 		require_once(VIEWS_PATH . 'job-offer-list.php');
-
-		/*
-		id oferta
-		Titulo oferta
-		Nombre empresa
-		Hace cuanto se creo la oferta
-		 */
 	}
 
-	private function makeAssocArrayByCompanyId($companyList) {
+	/* private function makeAssocArrayByCompanyId($companyList) {
 
 		foreach ($companyList as $company) {
 
@@ -114,7 +107,7 @@ class JobOfferController {
 		}
 
 		return $optionList;
-	}
+	} */
 
 	/* private function offerFactory($career, $description, $jobPosition, $isRemote, $title) {
 		$jobOffer = new JobOffer();
