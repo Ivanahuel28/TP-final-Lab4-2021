@@ -2,7 +2,7 @@
 
 namespace DAO;
 
-interface IntfJobPosition {
+interface IntfJobPositionDAO {
 
 	public function getAll();
 }

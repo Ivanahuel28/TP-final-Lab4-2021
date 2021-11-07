@@ -182,4 +182,22 @@ class CompanyDAO implements IntfCompanyDAO {
 		$company->setLink($queryResult['link']);
 		$company->setActive(!($queryResult['active'] == "0"));
 	}
+
+	public function getById($id){
+		try {
+			$query = "SELECT * FROM " . $this->tableName . " WHERE id_company = " . $id;
+			$connection = Connection::GetInstance();
+			$queryResult = $connection->Execute($query);
+
+			$company = new Company();
+			if (!empty($queryResult)) {
+				$this->createCompany($company, $queryResult[0]);
+			}
+		} catch (Exception $ex) {
+			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+			return null;
+		}
+
+		return $company;
+	}
 }

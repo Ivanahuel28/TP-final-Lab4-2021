@@ -2,11 +2,11 @@
 
 namespace DAO;
 
-use DAO\IntfJobPosition as IntfJobPosition;
+use DAO\IntfJobPositionDAO as IntfJobPositionDAO;
 use Models\JobPosition as JobPosition;
 
 
-class JobPositionDAO implements IntfJobPosition {
+class JobPositionDAO implements IntfJobPositionDAO {
 
 	private $jobPositionList;
 

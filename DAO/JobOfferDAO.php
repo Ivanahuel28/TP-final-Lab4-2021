@@ -5,7 +5,7 @@ namespace DAO;
 use Models\JobOffer;
 use FFI\Exception;
 
-class JobOfferDAO {
+class JobOfferDAO implements IntfJobOfferDAO {
 
 	private $tableName = "job_offers";
 
@@ -13,16 +13,16 @@ class JobOfferDAO {
 
 		try {
 			$query = "INSERT INTO " . $this->tableName .
-				" (remote, description, career, job_position, active, title, id_company)
-			  VALUES (:remote, :description,:career,:job_position,:active, :title,:id_company);";
+				" (id_job_position,id_company,id_career,title,description,remote,active)
+			  VALUES (:id_job_position,:id_company,:id_career,:title,:description,:remote,:active);";
 
-			$parameters['remote'] = $jobOffer->getRemote();
-			$parameters['description'] = $jobOffer->getDescription();
-			$parameters['career'] = $jobOffer->getCareer();
-			$parameters['job_position'] = $jobOffer->getJobPosition();
-			$parameters['active'] = $jobOffer->getActive();
-			$parameters['title'] = $jobOffer->getTitle();
+			$parameters['id_job_position'] = $jobOffer->getId_jobPosition();
 			$parameters['id_company'] = $jobOffer->getId_company();
+			$parameters['id_career'] = $jobOffer->getId_career();
+			$parameters['title'] = $jobOffer->getTitle();
+			$parameters['description'] = $jobOffer->getDescription();
+			$parameters['remote'] = $jobOffer->getRemote();
+			$parameters['active'] = $jobOffer->getActive();
 
 			$this->connection = Connection::GetInstance();
 
@@ -41,8 +41,6 @@ class JobOfferDAO {
 			$query = "SELECT * FROM " . $this->tableName;
 			$connection = Connection::GetInstance();
 			$queryResult = $connection->Execute($query);
-
-			
 		} catch (Exception $ex) {
 			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
 			return null;

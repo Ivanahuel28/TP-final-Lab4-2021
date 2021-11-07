@@ -21,24 +21,23 @@ class JobOfferController {
 		$this->jobPositionDAO = new JobPositionDAO();
 	}
 
-	public function requestAddNew($id_company,$title ,$description,$isRemote,$active,$careerNJobPosition = "") {
+	public function requestAddNew($id_company,$id_career,$id_jobPosition ,$title ,$description,$isRemote = "",$active = "") {
 
 		$jobOffer = new JobOffer();
 
-		$jobOffer->setId_company($id_company);
+		$jobOffer->setId_company((int)$id_company);
+		$jobOffer->setId_career((int)$id_career);
+		$jobOffer->setId_jobPosition((int)$id_jobPosition);
+		
 		$jobOffer->setTitle($title);
 		$jobOffer->setDescription($description);
-
-		if($careerNJobPosition){
-			$careerArray = explode(" - ", $careerNJobPosition);
-			$jobOffer->setCareer($careerArray[0]);
-			$jobOffer->setJobPosition($careerArray[1]);
-		}
 
 		$jobOffer->setRemote($isRemote === "true");
 		$jobOffer->setActive($active === "true");
 
 		$this->jobOfferDAO->addOffer($jobOffer);
+
+		$this->renderJobOfferList();
 		
 	}
 
@@ -51,14 +50,22 @@ class JobOfferController {
 		require_once(VIEWS_PATH . 'job-offer-create-first-step.php');
 	}
 
-	public function renderView_Create_FinalStep() {
+	public function renderView_Create_FinalStep($id_company,$id_career) {
 
-		
+		/* echo $id_company . $id_career ;
 
-		require_once(VIEWS_PATH . 'job-offer-create.php');
+		var_dump((int)$id_company);
+		var_dump($id_career); */
+
+		$company = $this->companyDAO->getById((float)$id_company);
+		$career = $this->careerDAO->getById((int)$id_career);
+
+		$jobPositionList = $this->jobPositionDAO->getAll();
+
+		require_once(VIEWS_PATH . 'job-offer-create-final-step.php');
 	}
 
-	public function requestJobOfferList() {
+	public function renderJobOfferList() {
 
 		/* $jobOfferList = $this->jobOfferDAO->getAll();
 
