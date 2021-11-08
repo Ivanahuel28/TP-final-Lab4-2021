@@ -13,7 +13,7 @@ class StudentController {
 
 	public function renderPersonalData(){
 
-		$student = $this->studentDAO->getByEmail($_SESSION['user']);
+		$student = $this->studentDAO->getByEmail($_SESSION['user']->getUsername());
 		require_once(VIEWS_PATH.'student-personal-data.php');
 	}
 }
