@@ -9,13 +9,11 @@ class HomeController {
 	public function Index($message = "") {
 
 		if($_SESSION['user']){
-
 			if($_SESSION['user']->getUserType() === "admin"){
 				$this->renderAdminHome();
 			}else{
 				$this->renderStudentHome();
 			}
-			
 		}else{
 			header('Location: Session/renderLoginView');
 		}
@@ -27,5 +25,13 @@ class HomeController {
 
 	public function renderAdminHome(){
 		require_once(VIEWS_PATH.'admin-home.php');
+	}
+
+    public function renderRegisterUser(){
+		require_once(VIEWS_PATH.'register.php');
+	}
+
+    public function renderLogin(){
+		require_once(VIEWS_PATH.'login.php');
 	}
 }

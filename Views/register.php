@@ -1,8 +1,8 @@
 <link rel="stylesheet" type="text/css" href="<?php echo CSS_PATH ?>signin.css">
 
-<body>
+<body class="text-center w-25 mx-auto mt-5">
 <main class="form-signin">
-    <form action="<?php echo FRONT_ROOT ?>Session/loginRequest" method="POST">
+    <form action="<?php echo FRONT_ROOT ?>Session/registerUser" method="POST">
         <img class="mb-4" src="<?php echo IMG_PATH ?>signin.svg" alt="compnay icon" width="72" height="57">
         <h1 class="h3 mb-3 fw-normal">UTN Jobs</h1>
 
@@ -16,9 +16,9 @@
         </div>
 
         <div class="checkbox mb-3">
-            <p>Nuevo Usuario? <a href="<?php echo FRONT_ROOT ?>Home/renderRegisterUser">Registrate!</a> </p>
+            <p>Ya estas registrado? <a href="<?php echo FRONT_ROOT ?>Home/renderLogin">Inicia Sesion!</a> </p>
         </div>
-        <button class="w-100 btn btn-lg btn-primary" type="submit">Ingresar</button>
+        <button class="w-100 btn btn-lg btn-primary" type="submit">Registrate</button>
     </form>
 </main>
 </body>

@@ -2,28 +2,59 @@
 
 namespace Controllers;
 
+use DAO\StudentDAO;
 use DAO\UserDAO;
 use Models\User;
 
 class SessionController
 {
+    const ADMIN = 'admin';
+    const USER = 'user';
+    const STUDENT = 'student';
+
     private $userDAO;
+    private $studentDAO;
 
     public function __construct()
     {
         $this->userDAO = new UserDAO();
+        $this->studentDAO = new StudentDAO();
     }
 
     public function loginRequest($username, $password)
     {
         $user = $this->userDAO->getUser($username, $password);
-        if ($user->getUserType()) {
-            $_SESSION['user'] = $user;
-            header('Location: ' . FRONT_ROOT);
-        } else {
-            unset($_SESSION['user']);
-            $this->showErrorMsg();
-            $this->renderLoginView();
+
+        switch ($user->getUserType()) {
+            case self::ADMIN:
+                $this->setSessionAndRedirect($user);
+                break;
+            case self::STUDENT:
+                $student = $this->studentDAO->getByEmail($username);
+                $student->getActive() ? $this->setSessionAndRedirect($user) : $this->rejectLogin("El estudiante no se encuentra activo");
+                break;
+            default:
+                $this->rejectLogin("Usuario o contraseña incorrectos");
+                break;
+        }
+    }
+
+    public function registerUser($username, $password)
+    {
+        $user = $this->userDAO->getUser($username, $password);
+        $student = $this->studentDAO->getByEmail($username);
+
+        switch ($student) {
+            case self::ADMIN:
+                $this->setSessionAndRedirect($user);
+                break;
+            case self::STUDENT:
+                $student = $this->studentDAO->getByEmail($username);
+                $student->getActive() ? $this->setSessionAndRedirect($user) : $this->rejectLogin();
+                break;
+            default:
+                $this->rejectLogin();
+                break;
         }
     }
 
@@ -35,19 +66,31 @@ class SessionController
     public function logout()
     {
         session_destroy();
-
         header('Location: ' . FRONT_ROOT);
     }
 
-    private function showErrorMsg()
+    /**
+     * @param User $user
+     */
+    private function setSessionAndRedirect(User $user)
     {
+        $_SESSION[self::USER] = $user;
+        header('Location: ' . FRONT_ROOT);
+    }
+
+    private function rejectLogin($errorMsg)
+    {
+        unset($_SESSION[self::USER]);
+        $this->showErrorMsg($errorMsg);
+        $this->renderLoginView();
+    }
+
+    private function showErrorMsg($errorMsg)
+    {
+
         echo '
-        <div class="container align-content-center">
-           <div class="flex-column py-2" >
-               <div class="alert alert-danger" role="alert">
-	        		    Nombre de usuario y/o contraseña inconrrectos
-                 </div>
-             </div>
-         </div>';
+               <div class="alert alert-warning position-absolute alert-fixed" role="alert">' . $errorMsg . '</div>
+         ';
+
     }
 }
