@@ -8,70 +8,66 @@ use DAO\JobOfferDAO;
 use DAO\JobPositionDAO;
 use Models\JobOffer;
 
-class JobOfferController {
-	private $jobOfferDAO;
-	private $companyDAO;
-	private $careerDAO;
-	private $jobPositionDAO;
+class JobOfferController
+{
+    private $jobOfferDAO;
+    private $companyDAO;
+    private $careerDAO;
+    private $jobPositionDAO;
 
-	public function __construct() {
-		$this->jobOfferDAO = new JobOfferDAO();
-		$this->companyDAO = new CompanyDAO();
-		$this->careerDAO = new CareerDAO();
-		$this->jobPositionDAO = new JobPositionDAO();
-	}
+    public function __construct()
+    {
+        $this->jobOfferDAO = new JobOfferDAO();
+        $this->companyDAO = new CompanyDAO();
+        $this->careerDAO = new CareerDAO();
+        $this->jobPositionDAO = new JobPositionDAO();
+    }
 
-	public function requestAddNew($id_company,$id_career,$id_jobPosition ,$title ,$description,$isRemote = "",$active = "") {
+    public function requestAddNew($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote = "", $active = "")
+    {
 
-		$jobOffer = new JobOffer();
+        $jobOffer = $this->jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active);
 
-		$jobOffer->setId_company((int)$id_company);
-		$jobOffer->setId_career((int)$id_career);
-		$jobOffer->setId_jobPosition((int)$id_jobPosition);
-		
-		$jobOffer->setTitle($title);
-		$jobOffer->setDescription($description);
+        if (!$this->jobOfferDAO->find($jobOffer))
+        {
+            $this->jobOfferDAO->addOffer($jobOffer);
+            $this->printSuccessfullyAdded();
+        }
+        else
+        {
+            $this->printAlertAlreadyExist();
+        }
 
-		$jobOffer->setRemote($isRemote === "true");
-		$jobOffer->setActive($active === "true");
+        $this->renderJobOfferList();
+    }
 
-		$this->jobOfferDAO->addOffer($jobOffer);
+    public function renderView_Create_FirstStep()
+    {
 
-		$this->renderJobOfferList();
-		
-	}
+        $companiesList = $this->companyDAO->getAllActives();
 
-	public function renderView_Create_FirstStep() {
+        $careersList = $this->careerDAO->getAllActives();
 
-		$companiesList = $this->companyDAO->getAllActives();
+        require_once(VIEWS_PATH . 'job-offer-create-first-step.php');
+    }
 
-		$careersList = $this->careerDAO->getAllActives();
+    public function renderView_Create_FinalStep($id_company, $id_career)
+    {
 
-		require_once(VIEWS_PATH . 'job-offer-create-first-step.php');
-	}
+        $company = $this->companyDAO->getById((float)$id_company);
+        $career = $this->careerDAO->getById((int)$id_career);
 
-	public function renderView_Create_FinalStep($id_company,$id_career) {
+        $jobPositionList = $this->jobPositionDAO->getAll();
 
-		/* echo $id_company . $id_career ;
+        require_once(VIEWS_PATH . 'job-offer-create-final-step.php');
+    }
 
-		var_dump((int)$id_company);
-		var_dump($id_career); */
+    public function renderJobOfferList()
+    {
 
-		$company = $this->companyDAO->getById((float)$id_company);
-		$career = $this->careerDAO->getById((int)$id_career);
+        $jobOfferList = $this->jobOfferDAO->getAll();
 
-		$jobPositionList = $this->jobPositionDAO->getAll();
-
-		require_once(VIEWS_PATH . 'job-offer-create-final-step.php');
-	}
-
-	public function renderJobOfferList() {
-
-		/* $jobOfferList = $this->jobOfferDAO->getAll();
-
-		$companyList = $this->makeAssocArrayByCompanyId($this->companyDAO->getAll());
-
-		if (isset($jobOfferList)) {
+		/* if (isset($jobOfferList)) {
 			foreach ($jobOfferList as $jobOffer) {
 
 				$list[$jobOffer->getId()] = array(
@@ -81,49 +77,44 @@ class JobOfferController {
 			}
 		} */
 
-		require_once(VIEWS_PATH . 'job-offer-list.php');
-	}
+        require_once(VIEWS_PATH . 'job-offer-list.php');
+    }
 
-	/* private function makeAssocArrayByCompanyId($companyList) {
+    private function jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active)
+    {
 
-		foreach ($companyList as $company) {
+        $jobOffer = new JobOffer();
 
-			$associatedList[$company->getId()] = $company->getName();
-		}
+        $jobOffer->setId_company((int)$id_company);
+        $jobOffer->setId_career((int)$id_career);
+        $jobOffer->setId_jobPosition((int)$id_jobPosition);
 
-		return $associatedList;
-	}
+        $jobOffer->setTitle($title);
+        $jobOffer->setDescription($description);
 
-	public function getCareersAndJobPositionsStrings() {
+        $jobOffer->setRemote($isRemote === "true");
+        $jobOffer->setActive($active === "true");
 
-		$careerList = $this->careerDAO->getAll();
-		$jobPositionList = $this->jobPositionDAO->getAll();
-		$optionList = array();
+        $jobOffer->setCreationDate(date('Y-m-d H:i:s'));
 
-		foreach ($careerList as $career) {
+        return $jobOffer;
+    }
 
-			if ($career->getActive() === true) {
+    private function printAlertAlreadyExist()
+    {
+        echo '
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			 <strong>Ups!</strong>  Ya existe una Oferta Laboral para esa empresa y posicion 
+			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  	</div>';
+    }
 
-				foreach ($jobPositionList as $jobPosition) {
-
-					if ($jobPosition->getId_Career() === $career->getId_Career()) {
-						array_push($optionList, $career->getDescription() . " - " . $jobPosition->getDescription());
-					}
-				}
-			}
-		}
-
-		return $optionList;
-	} */
-
-	/* private function offerFactory($career, $description, $jobPosition, $isRemote, $title) {
-		$jobOffer = new JobOffer();
-		$jobOffer->setActive(true);
-		$jobOffer->setCareer($career);
-		$jobOffer->setDescription($description);
-		$jobOffer->setJobPosition($jobPosition);
-		$jobOffer->setRemote($isRemote);
-		$jobOffer->setTitle($title);
-		return $jobOffer;
-	} */
+    private function printSuccessfullyAdded()
+    {
+        echo '
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			 <strong>Felicidades!</strong>  Oferta laboral creada con exito :)
+			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  	</div>';
+    }
 }

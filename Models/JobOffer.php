@@ -12,6 +12,7 @@ class JobOffer {
 	private $description;
 	private $remote;
 	private $active;
+	private $creationDate;
 
 	public function __construct() {
 	}
@@ -78,5 +79,15 @@ class JobOffer {
 
 	public function setActive($active) {
 		$this->active = $active;
+	}
+
+	public function getCreationDate()
+	{
+		return $this->creationDate;
+	}
+  
+	public function setCreationDate($creationDate)
+	{
+		$this->creationDate = $creationDate;
 	}
 }

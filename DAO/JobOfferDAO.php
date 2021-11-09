@@ -14,8 +14,8 @@ class JobOfferDAO implements IntfJobOfferDAO
     public function addOffer(JobOffer $jobOffer)
     {
         $query = "INSERT INTO " . $this->tableName .
-            " (id_job_position,id_company,id_career,title,description,remote,active)
-			  VALUES (:id_job_position,:id_company,:id_career,:title,:description,:remote,:active);";
+            " (id_job_position,id_company,id_career,title,description,remote,active,creation_date)
+			  VALUES (:id_job_position,:id_company,:id_career,:title,:description,:remote,:active,:creation_date);";
 
         $parameters['id_job_position'] = $jobOffer->getId_jobPosition();
         $parameters['id_company'] = $jobOffer->getId_company();
@@ -24,6 +24,7 @@ class JobOfferDAO implements IntfJobOfferDAO
         $parameters['description'] = $jobOffer->getDescription();
         $parameters['remote'] = $jobOffer->getRemote();
         $parameters['active'] = $jobOffer->getActive();
+        $parameters['creation_date'] = $jobOffer->getCreationDate();
 
         $connection = Connection::GetInstance();
 
@@ -37,7 +38,8 @@ class JobOfferDAO implements IntfJobOfferDAO
         $connection = Connection::GetInstance();
         $queryResult = $connection->Execute($query);
 
-        foreach ($queryResult as $element) {
+        foreach ($queryResult as $element)
+        {
 
             $jobOffer = new JobOffer();
 
@@ -54,4 +56,30 @@ class JobOfferDAO implements IntfJobOfferDAO
         return $jobsList;
     }
 
+    public function find(JobOffer $jobOffer)
+    {
+        try
+        {
+            $query = "SELECT * FROM " . $this->tableName . " WHERE id_company = :id_company AND id_job_position = :id_job_position ;";
+
+            $parameters['id_company'] = $jobOffer->getId_company();
+            $parameters['id_job_position'] = $jobOffer->getId_jobPosition();
+
+            $connection = Connection::GetInstance();
+
+            $queryResult = $connection->Execute($query, $parameters);
+        }
+        catch (Exception $ex)
+        {
+            $this->showErrorMsg($ex);
+            return null;
+        }
+
+        return $queryResult;
+    }
+
+    private function showErrorMsg(Exception $ex)
+    {
+        echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+    }
 }

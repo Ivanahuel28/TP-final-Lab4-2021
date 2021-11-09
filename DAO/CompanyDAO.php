@@ -120,31 +120,6 @@ class CompanyDAO implements IntfCompanyDAO {
 		}
 	}
 
-	/* private function getIndexByCuit($cuit)
-    {
-
-        $this->retrieveData();
-
-        $i = 0;
-        $index = false;
-
-        while (($index === false) && ($i < count($this->companiesList))) {
-            if ($cuit === $this->companiesList[$i]->getCuit()) {
-                $index = $i;
-            } else {
-                $i++;
-            }
-        }
-
-        return $index;
-    } */
-
-	/**
-	 * @param $query
-	 * @param array $companiesList
-	 * @return array
-	 * @throws Exception
-	 */
 	private function getCompaniesList($query, array $companiesList) {
 		$connection = Connection::GetInstance();
 
@@ -199,9 +174,7 @@ class CompanyDAO implements IntfCompanyDAO {
 		return $company;
 	}
 
-    /**
-     * @param Exception $ex
-     */
+	
     private function showErrorMsg(Exception $ex)
     {
         echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
