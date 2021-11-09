@@ -19,6 +19,14 @@ require_once('nav.php');
             <label for="formGroupExampleInput2" class="form-label">Rol</label>
             <input type="text" name="role" class="form-control" id="formGroupExampleInput2">
         </div>
+        <div class="mb-3">
+			<label for="formGroupExampleInput" class="form-label">Descripcion</label>
+			<textarea type="text" name="description" class="form-control" id="formGroupExampleInput" rows="4" ></textarea>
+		</div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput2" class="form-label">Pagina Web</label>
+            <input type="text" name="role" class="form-control" id="formGroupExampleInput2">
+        </div>
         <div class="form-check form-switch m-3">
             <input class="form-check-input" name="active" value="true" type="checkbox" id="flexSwitchCheckChecked"
                    checked>
