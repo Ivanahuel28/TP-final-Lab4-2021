@@ -1,6 +1,6 @@
 <link rel="stylesheet" type="text/css" href="<?php echo CSS_PATH ?>signin.css">
 
-<body>
+<body class="text-center w-25 mx-auto mt-5">
 <main class="form-signin">
     <form action="<?php echo FRONT_ROOT ?>Session/loginRequest" method="POST">
         <img class="mb-4" src="<?php echo IMG_PATH ?>signin.svg" alt="compnay icon" width="72" height="57">

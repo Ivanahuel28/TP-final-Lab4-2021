@@ -10,15 +10,19 @@ use Models\Company;
 class CompanyDAO implements IntfCompanyDAO {
 
 	private $tableName = "companies";
+    /**
+     * @var \DAO\Connection|null
+     */
+    private $connection;
 
-	public function getAll() {
+    public function getAll() {
 		$companiesList = array();
 		try {
 			$query = "SELECT * FROM " . $this->tableName;
 			$companiesList = $this->getCompaniesList($query, $companiesList);
 		} catch (Exception $ex) {
-			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
-			return null;
+            $this->showErrorMsg($ex);
+            return null;
 		}
 
 		return $companiesList;
@@ -30,7 +34,7 @@ class CompanyDAO implements IntfCompanyDAO {
 			$query = "SELECT * FROM " . $this->tableName . " WHERE active = 1";
 			$companiesList = $this->getCompaniesList($query, $companiesList);
 		} catch (Exception $ex) {
-			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            $this->showErrorMsg($ex);
 			return null;
 		}
 
@@ -38,8 +42,6 @@ class CompanyDAO implements IntfCompanyDAO {
 	}
 
 	public function add(Company $company) {
-
-		try {
 			$query = "INSERT INTO " . $this->tableName .
 				" (cuit, name, company_role,description,link,active)
 			  VALUES (:cuit, :name, :company_role,:description,:link,:active);";
@@ -54,10 +56,6 @@ class CompanyDAO implements IntfCompanyDAO {
 			$this->connection = Connection::GetInstance();
 
 			$this->connection->ExecuteNonQuery($query, $parameters);
-		} catch (Exception $ex) {
-			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
-			return null;
-		}
 	}
 
 	public function getByCuit($cuit) {
@@ -71,7 +69,7 @@ class CompanyDAO implements IntfCompanyDAO {
 				$this->createCompany($company, $queryResult[0]);
 			}
 		} catch (Exception $ex) {
-			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            $this->showErrorMsg($ex);
 			return null;
 		}
 
@@ -103,7 +101,7 @@ class CompanyDAO implements IntfCompanyDAO {
 
 			$connection->ExecuteNonQuery($query, $parameters);
 		} catch (Exception $ex) {
-			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            $this->showErrorMsg($ex);
 			return null;
 		}
 	}
@@ -117,7 +115,7 @@ class CompanyDAO implements IntfCompanyDAO {
 			$connection = Connection::GetInstance();
 			$connection->ExecuteNonQuery($query, $parameters);
 		} catch (Exception $ex) {
-			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            $this->showErrorMsg($ex);
 			return null;
 		}
 	}
@@ -194,10 +192,18 @@ class CompanyDAO implements IntfCompanyDAO {
 				$this->createCompany($company, $queryResult[0]);
 			}
 		} catch (Exception $ex) {
-			echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+            $this->showErrorMsg($ex);
 			return null;
 		}
 
 		return $company;
 	}
+
+    /**
+     * @param Exception $ex
+     */
+    private function showErrorMsg(Exception $ex)
+    {
+        echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+    }
 }

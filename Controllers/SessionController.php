@@ -41,20 +41,12 @@ class SessionController
 
     public function registerUser($username, $password)
     {
-        $user = $this->userDAO->getUser($username, $password);
-        $student = $this->studentDAO->getByEmail($username);
-
-        switch ($student) {
-            case self::ADMIN:
-                $this->setSessionAndRedirect($user);
-                break;
-            case self::STUDENT:
-                $student = $this->studentDAO->getByEmail($username);
-                $student->getActive() ? $this->setSessionAndRedirect($user) : $this->rejectLogin();
-                break;
-            default:
-                $this->rejectLogin();
-                break;
+        if ($this->userDAO->userIsRegistrated($username)) {
+            $this->rejectLogin("El usuario ya se encuentra registrado");
+        } else {
+            $student = $this->studentDAO->getByEmail($username);
+            $user = $this->userDAO->createUser($username, $password, !($student === null));
+            $this->setSessionAndRedirect($user);
         }
     }
 

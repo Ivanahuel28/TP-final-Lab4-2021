@@ -2,36 +2,52 @@
 
 namespace Controllers;
 
+use DAO\JobOfferDAO;
+use DAO\StudentDAO;
+use DAO\UserDAO;
 use Models\User;
 
-class HomeController {
+class HomeController
+{
+    private $jobOfferDAO;
 
-	public function Index($message = "") {
+    public function __construct()
+    {
+        $this->jobOfferDAO = new JobOfferDAO();
+    }
 
-		if($_SESSION['user']){
-			if($_SESSION['user']->getUserType() === "admin"){
-				$this->renderAdminHome();
-			}else{
-				$this->renderStudentHome();
-			}
-		}else{
-			header('Location: Session/renderLoginView');
-		}
-	}
+    public function Index($message = "")
+    {
 
-	public function renderStudentHome(){
-		require_once(VIEWS_PATH.'student-home.php');
-	}
+        if ($_SESSION['user']) {
+            if ($_SESSION['user']->getUserType() === "admin") {
+                $this->renderAdminHome();
+            } else {
+                $this->renderStudentHome();
+            }
+        } else {
+            header('Location: Session/renderLoginView');
+        }
+    }
 
-	public function renderAdminHome(){
-		require_once(VIEWS_PATH.'admin-home.php');
-	}
+    public function renderStudentHome()
+    {
+        $jobsList = $this->jobOfferDAO->getAll();
+        require_once(VIEWS_PATH . 'student-home.php');
+    }
 
-    public function renderRegisterUser(){
-		require_once(VIEWS_PATH.'register.php');
-	}
+    public function renderAdminHome()
+    {
+        require_once(VIEWS_PATH . 'admin-home.php');
+    }
 
-    public function renderLogin(){
-		require_once(VIEWS_PATH.'login.php');
-	}
+    public function renderRegisterUser()
+    {
+        require_once(VIEWS_PATH . 'register.php');
+    }
+
+    public function renderLogin()
+    {
+        require_once(VIEWS_PATH . 'login.php');
+    }
 }

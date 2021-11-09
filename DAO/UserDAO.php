@@ -15,25 +15,47 @@ class UserDAO implements IntfUserDAO
     {
         $user = new User();
         //SELECT user_type FROM users u WHERE u.username = 'admin' AND u.password = '123';
-        try {
-            $query = "SELECT * FROM " . $this->tableName . " WHERE username = :username AND password = :password";
-            $parameters['username'] = $username;
-            $parameters['password'] = $password;
 
-            $connection = Connection::GetInstance();
+        $query = "SELECT * FROM " . $this->tableName . " WHERE username = :username AND password = :password";
+        $parameters['username'] = $username;
+        $parameters['password'] = $password;
+        $connection = Connection::GetInstance();
+        $queryResult = $connection->Execute($query, $parameters);
 
-            $queryResult = $connection->Execute($query, $parameters);
+        if ($queryResult) {
+            $user->setId($queryResult[0]['id_user']);
+            $user->setUsername($queryResult[0]['username']);
+            $user->setPassword($queryResult[0]['password']);
+            $user->setUserType($queryResult[0]['user_type']);
+        }
+        return $user;
+    }
 
-            if ($queryResult) {
+    public function userIsRegistrated($username)
+    {
+        $user = new User();
+        //SELECT user_type FROM users u WHERE u.username = 'admin' AND u.password = '123';
 
-                $user->setId($queryResult[0]['id_user']);
-                $user->setUsername($queryResult[0]['username']);
-                $user->setPassword($queryResult[0]['password']);
-                $user->setUserType($queryResult[0]['user_type']);
-            }
-        } catch (\Exception $ex) {
-            echo '<script>console.log("Hubo un problema con la base de datos'. $ex->getMessage() . '"); </script>';
-            return $user;
+        $query = "SELECT * FROM " . $this->tableName . " WHERE username = :username";
+        $parameters['username'] = $username;
+        $connection = Connection::GetInstance();
+        $queryResult = $connection->Execute($query, $parameters);
+        return (bool)$queryResult;
+    }
+
+    public function createUser($username, $password, $isStudent)
+    {
+        $user = new User();
+        $query = "INSERT INTO " . $this->tableName . " (username,password,user_type)
+             VALUES (:username,:password,:user_type);";
+        $connection = Connection::GetInstance();
+        $parameters['username'] = $username;
+        $parameters['password'] = $password;
+        $parameters['user_type'] = $isStudent ? 'student' : 'admin';
+
+        $queryResult = $connection->ExecuteNonQuery($query, $parameters);
+        if ($queryResult) {
+            $user = $this->getUser($username, $password);
         }
         return $user;
     }
