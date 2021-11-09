@@ -16,16 +16,14 @@ class UserDAO implements IntfUserDAO
         $user = new User();
         //SELECT user_type FROM users u WHERE u.username = 'admin' AND u.password = '123';
 
-        $query = "SELECT * FROM " . $this->tableName . " WHERE username = :username AND password = :password";
+        $query = "SELECT * FROM " . $this->tableName . " WHERE username = :username";
         $parameters['username'] = $username;
-        $parameters['password'] = $password;
         $connection = Connection::GetInstance();
         $queryResult = $connection->Execute($query, $parameters);
-
-        if ($queryResult) {
+        if ($queryResult && password_verify($password,  $queryResult[0]['password'])) {
             $user->setId($queryResult[0]['id_user']);
             $user->setUsername($queryResult[0]['username']);
-            $user->setPassword($queryResult[0]['password']);
+            $user->setPassword($password);
             $user->setUserType($queryResult[0]['user_type']);
         }
         return $user;
@@ -50,7 +48,7 @@ class UserDAO implements IntfUserDAO
              VALUES (:username,:password,:user_type);";
         $connection = Connection::GetInstance();
         $parameters['username'] = $username;
-        $parameters['password'] = $password;
+        $parameters['password'] = password_hash($password,PASSWORD_DEFAULT);
         $parameters['user_type'] = $isStudent ? 'student' : 'admin';
 
         $queryResult = $connection->ExecuteNonQuery($query, $parameters);

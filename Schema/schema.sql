@@ -19,7 +19,7 @@ CREATE TABLE companies(
 CREATE TABLE users(
 	id_user mediumint UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	username varchar(30) UNIQUE ,
-	password varchar(30) NOT NULL ,
+	password varchar(300) NOT NULL ,
 	user_type enum('admin','student') NOT NULL 	
 );
 
