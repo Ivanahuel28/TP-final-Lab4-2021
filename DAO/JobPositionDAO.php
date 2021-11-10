@@ -17,6 +17,22 @@ class JobPositionDAO implements IntfJobPositionDAO {
 		return $this->jobPositionList;
 	}
 
+	public function getAllByCareerId($id_career){
+
+		$this->retrieveData();
+
+		$filteredList = array();
+
+		foreach ($this->jobPositionList as $jobPosition) {
+			
+			if($jobPosition->getId_career() === $id_career){
+				array_push($filteredList,$jobPosition);
+			}
+		}
+
+		return $filteredList;
+	}
+
 	private function retrieveData() {
 
 		$ch = curl_init("https://utn-students-api.herokuapp.com/api/JobPosition");

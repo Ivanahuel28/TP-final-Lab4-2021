@@ -57,7 +57,7 @@ class JobOfferController
         $company = $this->companyDAO->getById((float)$id_company);
         $career = $this->careerDAO->getById((int)$id_career);
 
-        $jobPositionList = $this->jobPositionDAO->getAll();
+        $jobPositionList = $this->jobPositionDAO->getAllByCareerId((int)$id_career);
 
         require_once(VIEWS_PATH . 'job-offer-create-final-step.php');
     }

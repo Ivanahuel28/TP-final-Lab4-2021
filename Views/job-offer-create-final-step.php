@@ -19,7 +19,7 @@ require_once('nav.php');
 		</div>
 		<div class="mb-3">
 			<label for="formGroupExampleInput" class="form-label">Posicion</label>
-			<select name="id_jobPosition" class="form-select" aria-label="Default select example">
+			<select name="id_jobPosition" class="form-select" aria-label="Default select example" required>
 				<?php foreach ($jobPositionList as $jobPosition) {
 					echo '<option value="' . $jobPosition->getId_jobPosition() . '">' . $jobPosition->getDescription() . '</option>';
 				}
