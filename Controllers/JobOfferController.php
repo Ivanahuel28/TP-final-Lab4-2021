@@ -6,7 +6,9 @@ use DAO\CareerDAO;
 use DAO\CompanyDAO as CompanyDAO;
 use DAO\JobOfferDAO;
 use DAO\JobPositionDAO;
+use Models\Company;
 use Models\JobOffer;
+use Models\JobPosition;
 
 class JobOfferController
 {
@@ -26,7 +28,7 @@ class JobOfferController
     public function requestAddNew($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote = "", $active = "")
     {
 
-        $jobOffer = $this->jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active);
+        $jobOffer = $this->jobOfferFactory((int)$id_company, (int)$id_career,(int) $id_jobPosition, $title, $description, $isRemote, $active);
 
         if (!$this->jobOfferDAO->find($jobOffer))
         {
@@ -67,15 +69,22 @@ class JobOfferController
 
         $jobOfferList = $this->jobOfferDAO->getAll();
 
-		/* if (isset($jobOfferList)) {
+		if (isset($jobOfferList)) {
 			foreach ($jobOfferList as $jobOffer) {
 
-				$list[$jobOffer->getId()] = array(
+                $company = new Company();
+                $company = $this->companyDAO->getById($jobOffer->getId_company());
+
+                $jobPosition = new JobPosition();
+                $jobPosition = $this->jobPositionDAO->getById($jobOffer->getId_jobPosition());
+
+				$list[$jobOffer->getId_jobOffer()] = array(
 					'title' => $jobOffer->getTitle(),
-					'companyName' => (isset($companyList[$jobOffer->getCompanyId()])) ? $companyList[$jobOffer->getCompanyId()] : ""
+					'companyName' => $company->getName(),
+                    'jobPositionTitle' => $jobPosition->getDescription()
 				);
 			}
-		} */
+		}
 
         require_once(VIEWS_PATH . 'job-offer-list.php');
     }

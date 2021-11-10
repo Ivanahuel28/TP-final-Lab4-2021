@@ -2,9 +2,12 @@
 
 namespace Controllers;
 
+use DAO\CompanyDAO;
 use DAO\JobOfferDAO;
 use DAO\StudentDAO;
 use DAO\UserDAO;
+use Models\Company;
+use Models\Student;
 use Models\User;
 
 class HomeController
@@ -14,25 +17,52 @@ class HomeController
     public function __construct()
     {
         $this->jobOfferDAO = new JobOfferDAO();
+        $this->studentDAO = new StudentDAO();
+        $this->companyDAO = new CompanyDAO();
     }
 
     public function Index($message = "")
     {
 
-        if ($_SESSION['user']) {
-            if ($_SESSION['user']->getUserType() === "admin") {
+        if ($_SESSION['user'])
+        {
+            if ($_SESSION['user']->getUserType() === "admin")
+            {
                 $this->renderAdminHome();
-            } else {
+            }
+            else
+            {
                 $this->renderStudentHome();
             }
-        } else {
+        }
+        else
+        {
             header('Location: Session/renderLoginView');
         }
     }
 
     public function renderStudentHome()
     {
-        $jobsList = $this->jobOfferDAO->getAll();
+        $student = new Student();
+
+        $student = $this->studentDAO->getByEmail($_SESSION['user']->getUsername());
+
+        $jobOfferList = $this->jobOfferDAO->getAllActivesByCareer($student->getCareerId());
+
+        foreach ($jobOfferList as $jobOffer) {
+
+            $company = new Company();
+
+            $company = $this->companyDAO->getById($jobOffer->getId_company());
+            
+            $list[$jobOffer->getId_jobOffer()] = array(
+                'title' => $jobOffer->getTitle(),
+                'companyName' => $company->getName()
+            );
+        }
+
+        /* title, company name*/
+
         require_once(VIEWS_PATH . 'student-home.php');
     }
 

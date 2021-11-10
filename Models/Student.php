@@ -3,21 +3,7 @@
 namespace Models;
 
 class Student {
-	/* 
-	{
-		"studentId": 199,
-		"careerId": 2,
-		"firstName": "Terra",
-		"lastName": "Kitson",
-		"dni": "03-745-8474",
-		"fileNumber": "38-059-8219",
-		"gender": "Polygender",
-		"birthDate": "2021-06-14T00:00:00",
-		"email": "tkitson5i@mashable.com",
-		"phoneNumber": "633-303-0830",
-		"active": false
-  	}
-	*/
+	
 	private $id;
 	private $careerId;
 	private $firstname;

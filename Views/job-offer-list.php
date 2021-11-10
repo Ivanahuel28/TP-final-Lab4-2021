@@ -11,19 +11,19 @@ require_once('nav.php');
 	</div>
 	<div class="container-fluid mt-3 w-75 ">
 		<?php
-		if (!empty($jobOfferList))
+		if (!empty($list))
 		{
-			foreach ($jobOfferList as $jobOffer)
+			foreach ($list as $id_jobOffer => $element)
 			{ ?>
 				<div class="border border-2 rounded m-2 d-flex">
 					<div class=" p-2">
 						<img src="<?php echo IMG_PATH ?>icon-company-50.png" height="40" width="40" alt="">
 					</div>
 					<div class="my-auto p-2 mx-3">
-						<a class="link-dark text-decoration-none fw-bold " href=""><?php echo $jobOffer->getTitle() ?></a>
+						<a class="link-dark text-decoration-none fw-bold " href=""><?php echo $element['title'] ?></a>
 					</div>
 					<div class="my-auto  mx-3">
-						<p class="fw-lighter m-0"><?php echo $jobOffer->getId_company() ?></p>
+						<p class="fw-lighter m-0"><?php echo "hola" ?></p>
 					</div>
 					<div class="my-auto ms-auto mx-3">
 

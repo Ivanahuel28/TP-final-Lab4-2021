@@ -60,9 +60,11 @@ class CompanyDAO implements IntfCompanyDAO {
 
 	public function getByCuit($cuit) {
 		try {
-			$query = "SELECT * FROM " . $this->tableName . " WHERE cuit = " . $cuit;
+			$query = "SELECT * FROM " . $this->tableName . " WHERE cuit = :cuit ;";
 			$connection = Connection::GetInstance();
-			$queryResult = $connection->Execute($query);
+
+			$parameters['cuit'] = $cuit;
+			$queryResult = $connection->Execute($query,$parameters);
 
 			$company = new Company();
 			if (!empty($queryResult)) {

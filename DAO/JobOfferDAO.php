@@ -43,13 +43,15 @@ class JobOfferDAO implements IntfJobOfferDAO
 
             $jobOffer = new JobOffer();
 
+            $jobOffer->setId_jobOffer($element['id_job_offer']);
+            $jobOffer->setId_jobPosition((int)$element['id_job_position']);
+            $jobOffer->setId_company((int)$element['id_company']);
+            $jobOffer->setId_career((int)$element['id_career']);
             $jobOffer->setTitle($element['title']);
-            $jobOffer->setRemote($element['remote']);
             $jobOffer->setDescription($element['description']);
-            $jobOffer->setActive($element['active']);
-            $jobOffer->setId_career($element['id_career']);
-            $jobOffer->setId_company($element['id_company']);
-            $jobOffer->setId_jobPosition(!($element['id_job_position'] === "0"));
+            $jobOffer->setCreationDate($element['creation_date']);
+            $jobOffer->setRemote(($element['remote'] !== "0") ? true : false);
+            $jobOffer->setActive(($element['active'] !== "0") ? true : false);
 
             array_push($jobsList, $jobOffer);
         }
@@ -76,6 +78,35 @@ class JobOfferDAO implements IntfJobOfferDAO
         }
 
         return $queryResult;
+    }
+
+    public function getAllActivesByCareer($id_career)
+    {
+        $jobsList = array();
+        $query = "SELECT * FROM " . $this->tableName .' WHERE id_career = :id_career AND active = 1 ;';
+        $connection = Connection::GetInstance();
+
+        $parameters['id_career'] = $id_career;
+        $queryResult = $connection->Execute($query,$parameters);
+
+        foreach ($queryResult as $element)
+        {
+
+            $jobOffer = new JobOffer();
+
+            $jobOffer->setId_jobOffer((int)$element['id_job_offer']);
+            $jobOffer->setId_jobPosition((int)$element['id_job_position']);
+            $jobOffer->setId_company((int)$element['id_company']);
+            $jobOffer->setId_career((int)$element['id_career']);
+            $jobOffer->setTitle($element['title']);
+            $jobOffer->setDescription($element['description']);
+            $jobOffer->setCreationDate($element['creation_date']);
+            $jobOffer->setRemote(($element['remote'] !== "0") ? true : false);
+            $jobOffer->setActive(($element['active'] !== "0") ? true : false);
+
+            array_push($jobsList, $jobOffer);
+        }
+        return $jobsList;
     }
 
     private function showErrorMsg(Exception $ex)
