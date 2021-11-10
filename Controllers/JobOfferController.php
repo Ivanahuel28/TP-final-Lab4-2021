@@ -91,6 +91,13 @@ class JobOfferController
 
     public function studentRequestJobOfferDetails($id_jobOffer){
 
+        $jobOffer = new JobOffer();
+
+        $jobOffer = $this->jobOfferDAO->getById($id_jobOffer);
+
+        $companyName = $this->companyDAO->getNameById($jobOffer->getId_company());
+
+        $jobPosition = $this->jobPositionDAO->getTitleById($jobOffer->getId_jobPosition());
 
         require_once(VIEWS_PATH.'job-offer-detail.php');
     }

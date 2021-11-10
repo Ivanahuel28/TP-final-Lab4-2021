@@ -176,6 +176,24 @@ class CompanyDAO implements IntfCompanyDAO {
 		return $company;
 	}
 
+	public function getNameById($id){
+
+		$companyName = "null";
+
+		try {
+			$query = "SELECT name FROM " . $this->tableName . " WHERE id_company = " . $id;
+			$connection = Connection::GetInstance();
+			$queryResult = $connection->Execute($query);
+
+			if (!empty($queryResult)) {
+				$companyName = $queryResult[0]['name'];
+			}
+		} catch (Exception $ex) {
+            $this->showErrorMsg($ex);
+		}
+
+		return $companyName;
+	}
 	
     private function showErrorMsg(Exception $ex)
     {

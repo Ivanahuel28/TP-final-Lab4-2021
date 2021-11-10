@@ -38,20 +38,20 @@ class JobOfferDAO implements IntfJobOfferDAO
         $connection = Connection::GetInstance();
         $queryResult = $connection->Execute($query);
 
-        foreach ($queryResult as $element)
+        foreach ($queryResult as $queryResult)
         {
 
             $jobOffer = new JobOffer();
 
-            $jobOffer->setId_jobOffer($element['id_job_offer']);
-            $jobOffer->setId_jobPosition((int)$element['id_job_position']);
-            $jobOffer->setId_company((int)$element['id_company']);
-            $jobOffer->setId_career((int)$element['id_career']);
-            $jobOffer->setTitle($element['title']);
-            $jobOffer->setDescription($element['description']);
-            $jobOffer->setCreationDate($element['creation_date']);
-            $jobOffer->setRemote(($element['remote'] !== "0") ? true : false);
-            $jobOffer->setActive(($element['active'] !== "0") ? true : false);
+            $jobOffer->setId_jobOffer($queryResult['id_job_offer']);
+            $jobOffer->setId_jobPosition((int)$queryResult['id_job_position']);
+            $jobOffer->setId_company((int)$queryResult['id_company']);
+            $jobOffer->setId_career((int)$queryResult['id_career']);
+            $jobOffer->setTitle($queryResult['title']);
+            $jobOffer->setDescription($queryResult['description']);
+            $jobOffer->setCreationDate($queryResult['creation_date']);
+            $jobOffer->setRemote(($queryResult['remote'] !== "0") ? true : false);
+            $jobOffer->setActive(($queryResult['active'] !== "0") ? true : false);
 
             array_push($jobsList, $jobOffer);
         }
@@ -83,32 +83,70 @@ class JobOfferDAO implements IntfJobOfferDAO
     public function getAllActivesByCareer($id_career)
     {
         $jobsList = array();
-        $query = "SELECT * FROM " . $this->tableName .' WHERE id_career = :id_career AND active = 1 ;';
+        $query = "SELECT * FROM " . $this->tableName . ' WHERE id_career = :id_career AND active = 1 ;';
         $connection = Connection::GetInstance();
 
         $parameters['id_career'] = $id_career;
-        $queryResult = $connection->Execute($query,$parameters);
+        $queryResult = $connection->Execute($query, $parameters);
 
-        foreach ($queryResult as $element)
+        foreach ($queryResult as $queryResult)
         {
 
             $jobOffer = new JobOffer();
 
-            $jobOffer->setId_jobOffer((int)$element['id_job_offer']);
-            $jobOffer->setId_jobPosition((int)$element['id_job_position']);
-            $jobOffer->setId_company((int)$element['id_company']);
-            $jobOffer->setId_career((int)$element['id_career']);
-            $jobOffer->setTitle($element['title']);
-            $jobOffer->setDescription($element['description']);
-            $jobOffer->setCreationDate($element['creation_date']);
-            $jobOffer->setRemote(($element['remote'] !== "0") ? true : false);
-            $jobOffer->setActive(($element['active'] !== "0") ? true : false);
+            
+
+            $jobOffer->setId_jobOffer((int)$queryResult['id_job_offer']);
+            $jobOffer->setId_jobPosition((int)$queryResult['id_job_position']);
+            $jobOffer->setId_company((int)$queryResult['id_company']);
+            $jobOffer->setId_career((int)$queryResult['id_career']);
+            $jobOffer->setTitle($queryResult['title']);
+            $jobOffer->setDescription($queryResult['description']);
+            $jobOffer->setCreationDate($queryResult['creation_date']);
+            $jobOffer->setRemote(($queryResult['remote'] !== "0") ? true : false);
+            $jobOffer->setActive(($queryResult['active'] !== "0") ? true : false);
 
             array_push($jobsList, $jobOffer);
         }
         return $jobsList;
     }
 
+    public function getById($id)
+    {
+        try
+        {
+            $query = "SELECT * FROM " . $this->tableName . " WHERE id_job_offer = " . $id;
+            $connection = Connection::GetInstance();
+            $queryResult = $connection->Execute($query);
+
+            $jobOffer = new JobOffer();
+            if (!empty($queryResult))
+            {
+                $this->createJobOffer($jobOffer, $queryResult[0]);
+            }
+        }
+        catch (Exception $ex)
+        {
+            $this->showErrorMsg($ex);
+            return null;
+        }
+
+        return $jobOffer;
+    }
+
+    private function createJobOffer($jobOffer, $queryResult)
+    {
+
+        $jobOffer->setId_jobOffer($queryResult['id_job_offer']);
+        $jobOffer->setId_jobPosition((int)$queryResult['id_job_position']);
+        $jobOffer->setId_company((int)$queryResult['id_company']);
+        $jobOffer->setId_career((int)$queryResult['id_career']);
+        $jobOffer->setTitle($queryResult['title']);
+        $jobOffer->setDescription($queryResult['description']);
+        $jobOffer->setCreationDate($queryResult['creation_date']);
+        $jobOffer->setRemote(($queryResult['remote'] !== "0") ? true : false);
+        $jobOffer->setActive(($queryResult['active'] !== "0") ? true : false);
+    }
     private function showErrorMsg(Exception $ex)
     {
         echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';

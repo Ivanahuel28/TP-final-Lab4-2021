@@ -7,6 +7,7 @@ class Application
 
     private $id_application;
     private $id_user;
+    private $id_student;
     private $id_jobOffer;
     private $date;
     private $filePath;
@@ -35,6 +36,15 @@ class Application
         $this->id_user = $id_user;
     }
 
+    public function getId_student()
+    {
+        return $this->id_student;
+    }
+
+    public function setId_student($id_student)
+    {
+        $this->id_student = $id_student;
+    }
     public function getId_jobOffer()
     {
         return $this->id_jobOffer;
