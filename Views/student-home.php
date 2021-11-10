@@ -22,7 +22,7 @@ if (!empty($list))
                     <div>
                         <h4><?php echo $element['title'] ?></h4>
                         <p><?php echo $element['companyName'] ?></p>
-                        <a href="#" class="btn btn-primary">
+                        <a href="<?php echo FRONT_ROOT ?>JobOffer/studentRequestJobOfferDetails" class="btn btn-primary">
                             Ver en detalle
                         </a>
                     </div>

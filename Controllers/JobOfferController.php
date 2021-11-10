@@ -89,6 +89,12 @@ class JobOfferController
         require_once(VIEWS_PATH . 'job-offer-list.php');
     }
 
+    public function studentRequestJobOfferDetails($id_jobOffer){
+
+
+        require_once(VIEWS_PATH.'job-offer-detail.php');
+    }
+
     private function jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active)
     {
 
