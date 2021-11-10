@@ -53,7 +53,6 @@ class CompanyController
 
     public function add($cuit, $name, $role,$description,$link, $active = false)
     {
-
         if (is_numeric($cuit) && strlen($cuit))
         {
             $companyByCuit = $this->companyDAO->getByCuit($cuit);

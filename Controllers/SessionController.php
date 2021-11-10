@@ -39,14 +39,25 @@ class SessionController
         }
     }
 
-    public function registerUser($username, $password)
+    public function registerUser($username, $password, $securityAnswer)
     {
         if ($this->userDAO->userIsRegistrated($username)) {
             $this->rejectLogin("El usuario ya se encuentra registrado");
         } else {
             $student = $this->studentDAO->getByEmail($username);
-            $user = $this->userDAO->createUser($username, $password, !($student === null));
+            $user = $this->userDAO->createUser($username, $password, !($student === null), $securityAnswer);
             $this->setSessionAndRedirect($user);
+        }
+    }
+
+    public function recoverPassword($username, $password, $securityAnswer)
+    {
+        if (!$this->userDAO->securityAnswerMatch($username, $securityAnswer)) {
+            $this->rejectLogin("No hay ningun usuario registrado con esas caracterisitcas");
+        } else {
+            $this->userDAO->updateUserPassword($username, $password);
+            echo '<div class="alert alert-success position-absolute alert-fixed" role="alert">Contraseña actualizada con exito</div>';
+            $this->renderLoginView();
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace DAO;
 
+use DAO\CompanyDAO as CompanyDAO;
 use FFI\Exception;
 use Models\Company;
 use Models\JobOffer;
@@ -10,7 +11,15 @@ class JobOfferDAO implements IntfJobOfferDAO
 {
 
     private $tableName = "job_offers";
-
+    private $companyDAO;
+    private $careerDAO;
+    private $jobPositionDAO;
+    public function __construct()
+    {
+        $this->companyDAO = new CompanyDAO();
+        $this->careerDAO = new CareerDAO();
+        $this->jobPositionDAO = new JobPositionDAO();
+    }
     public function addOffer(JobOffer $jobOffer)
     {
         $query = "INSERT INTO " . $this->tableName .
@@ -38,8 +47,7 @@ class JobOfferDAO implements IntfJobOfferDAO
         $connection = Connection::GetInstance();
         $queryResult = $connection->Execute($query);
 
-        foreach ($queryResult as $queryResult)
-        {
+        foreach ($queryResult as $queryResult) {
 
             $jobOffer = new JobOffer();
 
@@ -60,9 +68,8 @@ class JobOfferDAO implements IntfJobOfferDAO
 
     public function find(JobOffer $jobOffer)
     {
-        try
-        {
-            $query = "SELECT * FROM " . $this->tableName . " WHERE id_company = :id_company AND id_job_position = :id_job_position ;";
+        try {
+            $query = "SELECT * FROM " . $this->tableName . " WHERE id_company = :id_company AND id_job_position = :id_job_position ";
 
             $parameters['id_company'] = $jobOffer->getId_company();
             $parameters['id_job_position'] = $jobOffer->getId_jobPosition();
@@ -70,14 +77,68 @@ class JobOfferDAO implements IntfJobOfferDAO
             $connection = Connection::GetInstance();
 
             $queryResult = $connection->Execute($query, $parameters);
-        }
-        catch (Exception $ex)
-        {
+        } catch (Exception $ex) {
             $this->showErrorMsg($ex);
             return null;
         }
 
         return $queryResult;
+    }
+
+    public function downloadOffer()
+    {
+        $connect = mysqli_connect("localhost", "root", "", "utnjobs");
+        $output = '';
+        $query = "SELECT * FROM " . $this->tableName;
+        $result = mysqli_query($connect, $query);
+        if (mysqli_num_rows($result) > 0) {
+            $output .= '
+        <table class="table" bordered="1">  
+                    <tr>  
+                         <th>Title</th>  
+                         <th>Remote</th>  
+                         <th>Description</th>  
+                        <th>Active</th>
+                        <th>Creation Date</th>
+                        <th>Company Name</th>
+                        <th>Carrera</th>
+                        <th>Posicion de Trabajo</th>
+                    </tr>
+            ';
+            while ($row = mysqli_fetch_array($result)) {
+                $remote = $row["remote"] == '1' ? 'Yes' : 'No';
+                $active = $row["active"] == '1' ? 'Active' : 'Inactive';
+                $company = $this->companyDAO->getCompanyById($row["id_company"]);
+                $career = $this->careerDAO->getById($row["id_career"]);
+                $jobPosition = $this->jobPositionDAO->getById($row["id_job_position"]);
+                $output .= '
+                    <tr>  
+                         <td>' . $row["title"] . '</td>  
+                         <td>' . $remote  . '</td>  
+                         <td>' . $row["description"] . '</td>  
+                        <td>' . $active . '</td>  
+                        <td>' . $row["creation_date"] . '</td>
+                        <td>' . $company->getName() . '</td>
+                        <td>' . $career->getDescription() . '</td>
+                        <td>' . $jobPosition->getDescription() . '</td>
+                    </tr>
+            ';
+            }
+            $output .= '</table>';
+            header('Content-Type: application/xls');
+            header('Content-Disposition: attachment; filename=utn-job-offers.xls');
+            echo $output;
+        }
+        else {
+            echo '
+               <div class="alert alert-warning alert-dismissible fade show" role="alert">
+			 No hay ofertas que descargar.
+			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  	</div>';
+            require_once(VIEWS_PATH . 'job-offer-list.php');
+        }
+
+        exit;
     }
 
     public function getAllActivesByCareer($id_career)
@@ -94,7 +155,7 @@ class JobOfferDAO implements IntfJobOfferDAO
 
             $jobOffer = new JobOffer();
 
-            
+
 
             $jobOffer->setId_jobOffer((int)$queryResult['id_job_offer']);
             $jobOffer->setId_jobPosition((int)$queryResult['id_job_position']);

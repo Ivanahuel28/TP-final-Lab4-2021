@@ -20,7 +20,8 @@ CREATE TABLE users(
 	id_user mediumint UNSIGNED PRIMARY KEY AUTO_INCREMENT,
 	username varchar(30) UNIQUE ,
 	password varchar(300) NOT NULL ,
-	user_type enum('admin','student') NOT NULL 	
+	security_answer varchar(300) NOT NULL ,
+	user_type enum('admin','student') NOT NULL
 );
 
 CREATE TABLE job_offers(

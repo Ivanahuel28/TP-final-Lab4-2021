@@ -102,6 +102,12 @@ class JobOfferController
         require_once(VIEWS_PATH.'job-offer-detail.php');
     }
 
+    public function downloadOffers()
+    {
+
+        $this->jobOfferDAO->downloadOffer();
+    }
+
     private function jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active)
     {
 

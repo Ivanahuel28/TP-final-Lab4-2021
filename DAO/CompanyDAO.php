@@ -78,6 +78,24 @@ class CompanyDAO implements IntfCompanyDAO {
 		return $company;
 	}
 
+    public function getCompanyById($id) {
+		try {
+			$query = "SELECT * FROM " . $this->tableName . " WHERE id_company = " . $id;
+			$connection = Connection::GetInstance();
+			$queryResult = $connection->Execute($query);
+
+			$company = new Company();
+			if (!empty($queryResult)) {
+				$this->createCompany($company, $queryResult[0]);
+			}
+		} catch (Exception $ex) {
+            $this->showErrorMsg($ex);
+			return null;
+		}
+
+		return $company;
+	}
+
 	public function update(Company $company) {
 		try {
 			$query = "UPDATE " . $this->tableName .

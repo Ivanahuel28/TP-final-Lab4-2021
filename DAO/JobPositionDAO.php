@@ -41,7 +41,7 @@ class JobPositionDAO implements IntfJobPositionDAO {
 		$i = 0;
 
 		while (!$jobPositionToReturn && $i < count($this->jobPositionList)) {
-			if ($id === $this->jobPositionList[$i]->getId_jobPosition()) {
+			if ($id == $this->jobPositionList[$i]->getId_jobPosition()) {
 				$jobPositionToReturn = $this->jobPositionList[$i];
 			} else {
 				$i++;

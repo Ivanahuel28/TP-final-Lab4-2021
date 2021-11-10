@@ -76,6 +76,11 @@ class HomeController
         require_once(VIEWS_PATH . 'register.php');
     }
 
+    public function renderRecoverPassword()
+    {
+        require_once(VIEWS_PATH . 'recover-passwrod.php');
+    }
+
     public function renderLogin()
     {
         require_once(VIEWS_PATH . 'login.php');

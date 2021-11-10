@@ -18,6 +18,9 @@
         <div class="checkbox mb-3">
             <p>Nuevo Usuario? <a href="<?php echo FRONT_ROOT ?>Home/renderRegisterUser">Registrate!</a> </p>
         </div>
+        <div class="checkbox mb-3">
+            <p>Has olvidado tu contraseña? <a href="<?php echo FRONT_ROOT ?>Home/renderRecoverPassword">Recuperala!</a> </p>
+        </div>
         <button class="w-100 btn btn-lg btn-primary" type="submit">Ingresar</button>
     </form>
 </main>

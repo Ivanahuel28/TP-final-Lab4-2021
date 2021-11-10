@@ -44,7 +44,7 @@ class CareerDAO implements IntfCareerDAO {
 		$i = 0;
 
 		while (!$careerToReturn && $i < count($this->careerList)) {
-			if ($id === $this->careerList[$i]->getId_career()) {
+			if ($id == $this->careerList[$i]->getId_career()) {
 				$careerToReturn = $this->careerList[$i];
 			} else {
 				$i++;

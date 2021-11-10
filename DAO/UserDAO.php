@@ -20,7 +20,7 @@ class UserDAO implements IntfUserDAO
         $parameters['username'] = $username;
         $connection = Connection::GetInstance();
         $queryResult = $connection->Execute($query, $parameters);
-        if ($queryResult && password_verify($password,  $queryResult[0]['password'])) {
+        if ($queryResult && password_verify($password, $queryResult[0]['password'])) {
             $user->setId($queryResult[0]['id_user']);
             $user->setUsername($queryResult[0]['username']);
             $user->setPassword($password);
@@ -41,15 +41,42 @@ class UserDAO implements IntfUserDAO
         return (bool)$queryResult;
     }
 
-    public function createUser($username, $password, $isStudent)
+    public function securityAnswerMatch($username, $securityAnswer)
+    {
+        $query = "SELECT * FROM " . $this->tableName . " WHERE security_answer = :security_answer AND username = :username";
+        $parameters['security_answer'] = $securityAnswer;
+        $parameters['username'] = $username;
+        $connection = Connection::GetInstance();
+        $queryResult = $connection->Execute($query, $parameters);
+        return (bool)$queryResult;
+    }
+
+    public function createUser($username, $password, $isStudent, $securityAnswer)
     {
         $user = new User();
-        $query = "INSERT INTO " . $this->tableName . " (username,password,user_type)
-             VALUES (:username,:password,:user_type);";
+        $query = "INSERT INTO " . $this->tableName . " (username,password,user_type, security_answer)
+             VALUES (:username,:password,:user_type, :security_answer);";
         $connection = Connection::GetInstance();
         $parameters['username'] = $username;
-        $parameters['password'] = password_hash($password,PASSWORD_DEFAULT);
+        $parameters['password'] = password_hash($password, PASSWORD_DEFAULT);
         $parameters['user_type'] = $isStudent ? 'student' : 'admin';
+        $parameters['security_answer'] = $securityAnswer;
+
+        $queryResult = $connection->ExecuteNonQuery($query, $parameters);
+        if ($queryResult) {
+            $user = $this->getUser($username, $password);
+        }
+        return $user;
+    }
+
+    public function updateUserPassword($username, $password)
+    {
+        $user = new User();
+        $query = "UPDATE " . $this->tableName . " SET password = :password 
+             WHERE username = :username";
+        $connection = Connection::GetInstance();
+        $parameters['username'] = $username;
+        $parameters['password'] = password_hash($password, PASSWORD_DEFAULT);
 
         $queryResult = $connection->ExecuteNonQuery($query, $parameters);
         if ($queryResult) {
