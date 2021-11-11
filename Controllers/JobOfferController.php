@@ -6,124 +6,152 @@ use DAO\CareerDAO;
 use DAO\CompanyDAO as CompanyDAO;
 use DAO\JobOfferDAO;
 use DAO\JobPositionDAO;
-use DateTime;
+use Models\Company;
 use Models\JobOffer;
+use Models\JobPosition;
 
-class JobOfferController {
-	private $jobOfferDAO;
-	private $companyDAO;
-	private $careerDAO;
-	private $jobPositionDAO;
+class JobOfferController
+{
+    private $jobOfferDAO;
+    private $companyDAO;
+    private $careerDAO;
+    private $jobPositionDAO;
 
-	public function __construct() {
-		$this->jobOfferDAO = new JobOfferDAO();
-		$this->companyDAO = new CompanyDAO();
-		$this->careerDAO = new CareerDAO();
-		$this->jobPositionDAO = new JobPositionDAO();
-	}
+    public function __construct()
+    {
+        $this->jobOfferDAO = new JobOfferDAO();
+        $this->companyDAO = new CompanyDAO();
+        $this->careerDAO = new CareerDAO();
+        $this->jobPositionDAO = new JobPositionDAO();
+    }
 
-	public function requestAddNew($id_company,$title ,$description,$isRemote,$active,$careerNJobPosition = "") {
+    public function requestAddNew($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote = "", $active = "")
+    {
 
-		$jobOffer = new JobOffer();
+        $jobOffer = $this->jobOfferFactory((int)$id_company, (int)$id_career, (int) $id_jobPosition, $title, $description, $isRemote, $active);
 
-		$jobOffer->setId_company($id_company);
-		$jobOffer->setTitle($title);
-		$jobOffer->setDescription($description);
+        if (!$this->jobOfferDAO->find($jobOffer))
+        {
+            $this->jobOfferDAO->addOffer($jobOffer);
+            $this->printSuccessfullyAdded();
+        }
+        else
+        {
+            $this->printAlertAlreadyExist();
+        }
 
-		if($careerNJobPosition){
-			$careerArray = explode(" - ", $careerNJobPosition);
-		$jobOffer->setCareer($careerArray[0]);
-		$jobOffer->setJobPosition($careerArray[1]);
-		}
+        $this->renderJobOfferList();
+    }
 
-		$jobOffer->setRemote($isRemote === "true");
-		$jobOffer->setActive($active === "true");
+    public function renderView_Create_FirstStep()
+    {
 
-		$this->jobOfferDAO->addOffer($jobOffer);
-		
-	}
+        $companiesList = $this->companyDAO->getAllActives();
 
-	public function renderCreateNewJobOffer() {
+        $careersList = $this->careerDAO->getAllActives();
 
-		$companiesList = $this->makeAssocArrayByCompanyId($this->companyDAO->getAll());
+        require_once(VIEWS_PATH . 'job-offer-create-first-step.php');
+    }
 
-		$careerAndJobPositionList = $this->getCareersAndJobPositionsStrings();
+    public function renderView_Create_FinalStep($id_company, $id_career)
+    {
 
-		require_once(VIEWS_PATH . 'job-offer-create.php');
-	}
+        $company = $this->companyDAO->getById((float)$id_company);
+        $career = $this->careerDAO->getById((int)$id_career);
 
-	public function requestJobOfferList() {
+        $jobPositionList = $this->jobPositionDAO->getAllByCareerId((int)$id_career);
 
-		$jobOfferList = $this->jobOfferDAO->getAll();
+        require_once(VIEWS_PATH . 'job-offer-create-final-step.php');
+    }
 
-		$companyList = $this->makeAssocArrayByCompanyId($this->companyDAO->getAll());
+    public function renderJobOfferList()
+    {
 
-		if (isset($jobOfferList)) {
-			foreach ($jobOfferList as $jobOffer) {
+        $jobOfferList = $this->jobOfferDAO->getAll();
 
-				$list[$jobOffer->getId()] = array(
-					'title' => $jobOffer->getTitle(),
-					'companyName' => (isset($companyList[$jobOffer->getCompanyId()])) ? $companyList[$jobOffer->getCompanyId()] : ""
-				);
+        if (isset($jobOfferList))
+        {
+            foreach ($jobOfferList as $jobOffer)
+            {
 
-				/* array_push($list, array(
-					'id_jobOffer' => $jobOffer->getId_jobOffer(),
-					'title' => $jobOffer->getTitle(),
-					'companyName' => $associatedCompanyList[$jobOffer->getCompanyId()]
-				)); */
-			}
-		}
+                $company = new Company();
+                $company = $this->companyDAO->getById($jobOffer->getId_company());
 
-		require_once(VIEWS_PATH . 'job-offer-list.php');
+                $jobPosition = new JobPosition();
+                $jobPosition = $this->jobPositionDAO->getById($jobOffer->getId_jobPosition());
 
-		/*
-		id oferta
-		Titulo oferta
-		Nombre empresa
-		Hace cuanto se creo la oferta
-		 */
-	}
+                $list[$jobOffer->getId_jobOffer()] = array(
+                    'title' => $jobOffer->getTitle(),
+                    'companyName' => $company->getName(),
+                    'jobPositionTitle' => $jobPosition->getDescription()
+                );
+            }
+        }
 
-	private function makeAssocArrayByCompanyId($companyList) {
+        require_once(VIEWS_PATH . 'job-offer-list.php');
+    }
 
-		foreach ($companyList as $company) {
+    public function studentRequestJobOfferDetails($id_jobOffer)
+    {
 
-			$associatedList[$company->getId()] = $company->getName();
-		}
+        $jobOffer = new JobOffer();
 
-		return $associatedList;
-	}
+        $jobOffer = $this->jobOfferDAO->getById($id_jobOffer);
 
-	public function getCareersAndJobPositionsStrings() {
+        $companyName = $this->companyDAO->getNameById($jobOffer->getId_company());
 
-		$careerList = $this->careerDAO->getAll();
-		$jobPositionList = $this->jobPositionDAO->getAll();
-		$optionList = array();
+        $jobPositionTitle = $this->jobPositionDAO->getTitleById($jobOffer->getId_jobPosition());
 
-		foreach ($careerList as $career) {
+        require_once(VIEWS_PATH . 'job-offer-detail.php');
+    }
 
-			if ($career->getActive() === true) {
+    public function downloadOffers()
+    {
 
-				foreach ($jobPositionList as $jobPosition) {
+        $this->jobOfferDAO->downloadOffer();
+    }
 
-					if ($jobPosition->getId_Career() === $career->getId_Career()) {
-						array_push($optionList, $career->getDescription() . " - " . $jobPosition->getDescription());
-					}
-				}
-			}
-		}
+    public function studentRequestApply($id_jobOffer)
+    {
 
-		return $optionList;
-	}
+        //$_SESSION['user']->get
+    }
 
-	/* private function offerFactory($career, $description, $jobPosition, $isRemote, $title) {
-		$jobOffer = new JobOffer();
-		$jobOffer->setActive(true);
-		$jobOffer->setCareer($career);
-		$jobOffer->setDescription($description);
-		$jobOffer->setJobPosition($jobPosition);
-		$jobOffer->setRemote($isRemote);
-		$jobOffer->setTitle($title);
-		return $jobOffer;
-	} */
+    private function jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active)
+    {
+
+        $jobOffer = new JobOffer();
+
+        $jobOffer->setId_company((int)$id_company);
+        $jobOffer->setId_career((int)$id_career);
+        $jobOffer->setId_jobPosition((int)$id_jobPosition);
+
+        $jobOffer->setTitle($title);
+        $jobOffer->setDescription($description);
+
+        $jobOffer->setRemote($isRemote === "true");
+        $jobOffer->setActive($active === "true");
+
+        $jobOffer->setCreationDate(date('Y-m-d H:i:s'));
+
+        return $jobOffer;
+    }
+
+    private function printAlertAlreadyExist()
+    {
+        echo '
+		<div class="alert alert-warning alert-dismissible fade show" role="alert">
+			 <strong>Ups!</strong>  Ya existe una Oferta Laboral para esa empresa y posicion 
+			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  	</div>';
+    }
+
+    private function printSuccessfullyAdded()
+    {
+        echo '
+		<div class="alert alert-success alert-dismissible fade show" role="alert">
+			 <strong>Felicidades!</strong>  Oferta laboral creada con exito :)
+			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  	</div>';
+    }
 }

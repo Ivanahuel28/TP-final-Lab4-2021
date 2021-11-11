@@ -2,7 +2,7 @@
 
 namespace DAO;
 
-interface IntfJobOffer {
+interface IntfJobOfferDAO {
 
 	public function getAll();
 }

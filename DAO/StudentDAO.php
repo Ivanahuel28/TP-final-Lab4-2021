@@ -5,74 +5,80 @@ namespace DAO;
 use DAO\IntfStudentDAO as IntfStudentDAO;
 use Models\Student as Student;
 
-class StudentDAO implements IntfStudentDAO {
+class StudentDAO implements IntfStudentDAO
+{
 
-	private $studentList;
+    const API_KEY = "4f3bceed-50ba-4461-a910-518598664c08";
+    private $studentList;
 
-	public function __construct() {
-		$this->studentList = array();
-	}
+    public function __construct()
+    {
+        $this->studentList = array();
+    }
 
-	public function getAll() {
-		$this->retrieveData();
+    public function getAll()
+    {
+        $this->retrieveData();
 
-		return $this->studentList;
-	}
+        return $this->studentList;
+    }
 
-	public function getByEmail($email) {
+    public function getByEmail($email)
+    {
 
-		$this->retrieveData();
+        $this->retrieveData();
 
-		$studentToReturn = null;
-		$i = 0;
+        $studentToReturn = null;
+        $i = 0;
 
-		while (!$studentToReturn && $i < count($this->studentList)) {
-			if ($email->getUsername() === $this->studentList[$i]->getEmail()) {
-				$studentToReturn = $this->studentList[$i];
-			} else {
-				$i++;
-			}
-		}
+        while (!$studentToReturn && $i < count($this->studentList)) {
+            if ($email === $this->studentList[$i]->getEmail()) {
+                $studentToReturn = $this->studentList[$i];
+            } else {
+                $i++;
+            }
+        }
 
-		return $studentToReturn;
-	}
+        return $studentToReturn;
+    }
 
-	private function retrieveData() {
+    private function retrieveData()
+    {
 
-		$ch = curl_init("https://utn-students-api.herokuapp.com/api/Student");
-		$fp = fopen("Data/students.json", "w");
+        $ch = curl_init("https://utn-students-api.herokuapp.com/api/Student");
+        $fp = fopen("Data/students.json", "w");
 
-		curl_setopt($ch, CURLOPT_FILE, $fp);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array("x-api-key: 4f3bceed-50ba-4461-a910-518598664c08"));
+        curl_setopt($ch, CURLOPT_FILE, $fp);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, array("x-api-key: " . self::API_KEY . ""));
 
-		curl_exec($ch);
-		curl_close($ch);
-		fclose($fp);
+        curl_exec($ch);
+        curl_close($ch);
+        fclose($fp);
 
-		$this->studentList = array();
+        $this->studentList = array();
 
-		if (file_exists('Data/students.json')) {
-			$jsonContent = file_get_contents('Data/students.json');
+        if (file_exists('Data/students.json')) {
+            $jsonContent = file_get_contents('Data/students.json');
 
-			$arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
+            $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
 
-			foreach ($arrayToDecode as $valuesArray) {
-				$student = new Student();
+            foreach ($arrayToDecode as $valuesArray) {
+                $student = new Student();
 
-				$student->setId($valuesArray['studentId']);
-				$student->setCareerId($valuesArray['careerId']);
-				$student->setFirstname($valuesArray['firstName']);
-				$student->setLastname($valuesArray['lastName']);
-				$student->setDni($valuesArray['dni']);
-				$student->setFileNumber($valuesArray['fileNumber']);
-				$student->setGender($valuesArray['gender']);
-				$student->setBirthDate($valuesArray['birthDate']);
-				$student->setEmail($valuesArray['email']);
-				$student->setPhoneNumber($valuesArray['phoneNumber']);
-				$student->setActive($valuesArray['active']);
+                $student->setId($valuesArray['studentId']);
+                $student->setCareerId($valuesArray['careerId']);
+                $student->setFirstname($valuesArray['firstName']);
+                $student->setLastname($valuesArray['lastName']);
+                $student->setDni($valuesArray['dni']);
+                $student->setFileNumber($valuesArray['fileNumber']);
+                $student->setGender($valuesArray['gender']);
+                $student->setBirthDate($valuesArray['birthDate']);
+                $student->setEmail($valuesArray['email']);
+                $student->setPhoneNumber($valuesArray['phoneNumber']);
+                $student->setActive($valuesArray['active']);
 
-				array_push($this->studentList, $student);
-			}
-		}
-	}
+                array_push($this->studentList, $student);
+            }
+        }
+    }
 }

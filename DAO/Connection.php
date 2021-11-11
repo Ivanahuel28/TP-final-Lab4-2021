@@ -15,8 +15,8 @@ class Connection {
 		try {
 			$this->pdo = new PDO("mysql:host=" . DB_HOST . "; dbname=" . DB_NAME, DB_USER, DB_PASS);
 			$this->pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-		} catch (Exception $ex) {
-			throw $ex;
+		} catch (\Exception $ex) {
+            $this->showErrorMsg($ex);
 		}
 	}
 
@@ -36,8 +36,9 @@ class Connection {
 			$this->pdoStatement->execute();
 
 			return $this->pdoStatement->fetchAll();
-		} catch (Exception $ex) {
-			throw $ex;
+		} catch (\Exception $ex) {
+            $this->showErrorMsg($ex);
+            return null;
 		}
 	}
 
@@ -50,16 +51,17 @@ class Connection {
 			$this->pdoStatement->execute();
 
 			return $this->pdoStatement->rowCount();
-		} catch (Exception $ex) {
-			throw $ex;
+		} catch (\Exception $ex) {
+            $this->showErrorMsg($ex);
+            return null;
 		}
 	}
 
 	private function Prepare($query) {
 		try {
 			$this->pdoStatement = $this->pdo->prepare($query);
-		} catch (Exception $ex) {
-			throw $ex;
+		} catch (\Exception $ex) {
+            $this->showErrorMsg($ex);
 		}
 	}
 
@@ -75,4 +77,16 @@ class Connection {
 				$this->pdoStatement->bindParam($i, $parameters[$parameterName]);
 		}
 	}
+
+    /**
+     * @param Exception $ex
+     */
+    private function showErrorMsg(Exception $ex)
+    {
+        echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
+        echo '
+               <div class="alert alert-warning position-absolute alert-fixed" role="alert">Ocurrio un error al conectarse a la base de Datos</div>
+         ';
+        require_once(VIEWS_PATH . 'login.php');
+    }
 }

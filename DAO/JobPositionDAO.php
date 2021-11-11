@@ -2,11 +2,11 @@
 
 namespace DAO;
 
-use DAO\IntfJobPosition as IntfJobPosition;
+use DAO\IntfJobPositionDAO as IntfJobPositionDAO;
 use Models\JobPosition as JobPosition;
 
 
-class JobPositionDAO implements IntfJobPosition {
+class JobPositionDAO implements IntfJobPositionDAO {
 
 	private $jobPositionList;
 
@@ -15,6 +15,58 @@ class JobPositionDAO implements IntfJobPosition {
 		$this->retrieveData();
 
 		return $this->jobPositionList;
+	}
+
+	public function getAllByCareerId($id_career){
+
+		$this->retrieveData();
+
+		$filteredList = array();
+
+		foreach ($this->jobPositionList as $jobPosition) {
+			
+			if($jobPosition->getId_career() === $id_career){
+				array_push($filteredList,$jobPosition);
+			}
+		}
+
+		return $filteredList;
+	}
+
+	public function getById($id){
+		
+		$this->retrieveData();
+
+		$jobPositionToReturn = null;
+		$i = 0;
+
+		while (!$jobPositionToReturn && $i < count($this->jobPositionList)) {
+			if ($id == $this->jobPositionList[$i]->getId_jobPosition()) {
+				$jobPositionToReturn = $this->jobPositionList[$i];
+			} else {
+				$i++;
+			}
+		}
+
+		return $jobPositionToReturn;
+	}
+
+	public function getTitleById($id){
+
+		$this->retrieveData();
+
+		$title = null;
+		$i=0;
+
+		while (!$title && $i < count($this->jobPositionList)) {
+			if ($id === $this->jobPositionList[$i]->getId_jobPosition()) {
+				$title = $this->jobPositionList[$i]->getDescription();
+			} else {
+				$i++;
+			}
+		}
+
+		return $title;
 	}
 
 	private function retrieveData() {

@@ -9,12 +9,7 @@ require_once('nav.php');
     <form action="<?php echo FRONT_ROOT ?>Company/add" method="POST" class="justify-content-center">
         <div class="mb-3">
             <label for="formGroupExampleInput" class="form-label">Cuit *</label>
-            <input type="number" name="cuit" class="form-control w-10" id="formGroupExampleInput" min="0"
-                   max="99999999999" required>
-            <!-- <p>-</p>
-            <input type="number" name="name" class="form-control" id="formGroupExampleInput" required>
-            <p>-</p>
-            <input type="number" name="name" class="form-control" id="formGroupExampleInput" required> -->
+            <input type="text" name="cuit" class="form-control w-10" minlength="11" maxlength="11" id="formGroupExampleInput" required>
         </div>
         <div class="mb-3">
             <label for="formGroupExampleInput" class="form-label">Nombre</label>
@@ -22,6 +17,14 @@ require_once('nav.php');
         </div>
         <div class="mb-3">
             <label for="formGroupExampleInput2" class="form-label">Rol</label>
+            <input type="text" name="role" class="form-control" id="formGroupExampleInput2">
+        </div>
+        <div class="mb-3">
+			<label for="formGroupExampleInput" class="form-label">Descripcion</label>
+			<textarea type="text" name="description" class="form-control" id="formGroupExampleInput" rows="4" ></textarea>
+		</div>
+        <div class="mb-3">
+            <label for="formGroupExampleInput2" class="form-label">Pagina Web</label>
             <input type="text" name="role" class="form-control" id="formGroupExampleInput2">
         </div>
         <div class="form-check form-switch m-3">

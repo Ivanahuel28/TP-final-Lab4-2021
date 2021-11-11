@@ -8,6 +8,23 @@ class User {
 	private $username;
 	private $password;
 	private $userType;
+	private $securityAnswer;
+
+    /**
+     * @return mixed
+     */
+    public function getSecurityAnswer()
+    {
+        return $this->securityAnswer;
+    }
+
+    /**
+     * @param mixed $securityAnswer
+     */
+    public function setSecurityAnswer($securityAnswer)
+    {
+        $this->securityAnswer = $securityAnswer;
+    }
 
 	public function __construct() {
 	}

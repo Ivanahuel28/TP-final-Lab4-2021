@@ -18,4 +18,4 @@
 	<title>Framework Example</title>
 </head>
 
-<body>
+<body bgcolor="#f5f5f5">

@@ -51,16 +51,25 @@ class CompanyController
         require_once(VIEWS_PATH . 'company-info.php');
     }
 
-    public function add($cuit, $name, $role, $active = false)
+    public function add($cuit, $name, $role,$description,$link, $active = false)
     {
-        $companyByCuit = $this->companyDAO->getByCuit($cuit);
+        if (is_numeric($cuit) && strlen($cuit))
+        {
+            $companyByCuit = $this->companyDAO->getByCuit($cuit);
 
-        if ($companyByCuit == null || $companyByCuit->getCuit() != (int)$cuit) {
-            $company = $this->createCompany($cuit, $name, $role, $active);
-            $this->companyDAO->add($company);
-        } else {
-            $this->showExceptionMsg();
+            if ($companyByCuit == null || $companyByCuit->getCuit() != (int)$cuit)
+            {
+                $company = $this->createCompany($cuit, $name, $role,$description,$link, $active);
+                $this->companyDAO->add($company);
+            }
+            else
+            {
+                $this->showExceptionMsg();
+            }
+        }else{
+            $this->printCuitErrorMsg();
         }
+
         $this->showCompaniesView();
     }
 
@@ -93,7 +102,7 @@ class CompanyController
      * @param $active
      * @return Company
      */
-    private function createCompany($cuit, $name, $role, $active)
+    private function createCompany($cuit, $name, $role,$description,$link, $active)
     {
         $company = new Company();
 
@@ -101,6 +110,8 @@ class CompanyController
         $company->setCuit($cuit);
         $company->setName($name);
         $company->setRole($role);
+        $company->setDescription($description);
+        $company->setLink($link);
         $company->setActive($active == "true");
         return $company;
     }
@@ -113,4 +124,14 @@ class CompanyController
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
          </div>';
     }
+
+    private function printCuitErrorMsg()
+    {
+        echo '
+           <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>Atencion!</strong>  El cuit debe constar solamente de 11 digitos
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+         </div>';
+    }
+    
 }
