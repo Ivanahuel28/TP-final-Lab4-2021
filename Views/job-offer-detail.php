@@ -23,8 +23,8 @@ else
             <hr class="col-3 col-md-2 mb-5">
 
             <div class="mb-3">
-                <label for="formFile" class="form-label">Es necesario subir un archivo para su postulacion</label>
-                <input class="form-control" type="file" id="formFile" >
+                <!-- <label for="formFile" class="form-label">Es necesario subir un archivo para su postulacion</label> -->
+                <input class="form-control" type="file" id="formFile" disabled>
             </div>
 
             <div class="form-group d-flex justify-content-start">
@@ -32,11 +32,12 @@ else
                     <a name="action" onclick="history.back()" type="submit" class="btn btn-secondary btn-lg mx-3 px-4">Volver</a>
                 </div>
                 <div class="mb-5">
-                    <a href="" class="btn btn-success btn-lg px-4">Aplicar</a>
+                    <a href="" class="btn btn-success btn-lg px-4 disabled">Aplicar</a>
                 </div>
             </div>
 
     </div>
 
 <?php
-} ?>
+}
+?>

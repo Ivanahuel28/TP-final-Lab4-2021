@@ -111,42 +111,10 @@ class JobOfferController
         $this->jobOfferDAO->downloadOffer();
     }
 
-    public function studentRequestApply($file)
+    public function studentRequestApply($id_jobOffer)
     {
-        try
-        {
-            $fileName = $file["name"];
-            $tempFileName = $file["tmp_name"];
-            $type = $file["type"];
 
-            $filePath = UPLOADS_PATH . basename($fileName);
-
-            $fileType = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
-
-            $imageSize = getimagesize($tempFileName);
-
-            if ($imageSize !== false)
-            {
-                if (move_uploaded_file($tempFileName, $filePath))
-                {
-                    $image = new Image();
-                    $image->setName($fileName);
-                    $this->imageDAO->Add($image);
-
-                    $message = "Imagen subida correctamente";
-                }
-                else
-                    $message = "Ocurrió un error al intentar subir la imagen";
-            }
-            else
-                $message = "El archivo no corresponde a una imágen";
-        }
-        catch (Exception $ex)
-        {
-            $message = $ex->getMessage();
-        }
-
-        $this->ShowListView($message);
+        //$_SESSION['user']->get
     }
 
     private function jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active)
