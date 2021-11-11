@@ -3,9 +3,6 @@ require_once('nav.php');
 if ($_SESSION['user']->getUserType() === "admin")
 {
 ?>
-
-
-
 <?php
 }
 else
@@ -15,14 +12,20 @@ else
 
 
         <main>
-            <h1>Titulo de la oferta</h1>
+            <h1><?php echo $jobOffer->getTitle() ?></h1>
             <hr class="col-3 col-md-2 mb-5">
-            <p class="fs-5 col-md-8">Empresa: Avalith</p>
-            <p class="fs-5 col-md-8">Posicion: PHP Jr</p>
+            <p class="fs-5 col-md-8">Empresa: <?php echo $companyName ?></p>
+            <p class="fs-5 col-md-8">Posicion: <?php echo $jobPositionTitle ?></p>
+            <p class="fs-5 col-md-8">Remoto: <?php echo ($jobOffer->getRemote()) ? "Sí" : "No" ?></p>
             <strong class="fs-5 col-md-8">Acerca del Puesto</strong>
-            <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Sit, fuga ab! Sapiente possimus eos, iste necessitatibus similique sint quisquam temporibus reprehenderit suscipit amet itaque non magni, tenetur dignissimos cum doloremque?</p>
+            <p><?php echo $jobOffer->getDescription() ?></p>
 
             <hr class="col-3 col-md-2 mb-5">
+
+            <div class="mb-3">
+                <label for="formFile" class="form-label">Es necesario subir un archivo para su postulacion</label>
+                <input class="form-control" type="file" id="formFile" >
+            </div>
 
             <div class="form-group d-flex justify-content-start">
                 <div class="mb-5">

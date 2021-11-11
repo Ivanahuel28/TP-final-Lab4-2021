@@ -55,7 +55,7 @@ class JobPositionDAO implements IntfJobPositionDAO {
 
 		$this->retrieveData();
 
-		$title = "null";
+		$title = null;
 		$i=0;
 
 		while (!$title && $i < count($this->jobPositionList)) {

@@ -68,8 +68,8 @@ CREATE TABLE applications(
 -- insercion de datos
 
 
-INSERT INTO utnjobs.users (username,password,user_type)
-	VALUES ('admin','123','admin'),('ddouthwaite0@goo.gl','123','student'),('wlorant1@sbwire.com','123','student');
+/* INSERT INTO utnjobs.users (username,password,user_type)
+	VALUES ('admin','123','admin'),('ddouthwaite0@goo.gl','123','student'),('wlorant1@sbwire.com','123','student'); */
 
 INSERT INTO utnjobs.companies (cuit,name,company_role,description,link,active)
 	VALUES (

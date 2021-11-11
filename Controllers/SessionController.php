@@ -72,9 +72,6 @@ class SessionController
         header('Location: ' . FRONT_ROOT);
     }
 
-    /**
-     * @param User $user
-     */
     private function setSessionAndRedirect(User $user)
     {
         $_SESSION[self::USER] = $user;

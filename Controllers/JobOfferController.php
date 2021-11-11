@@ -28,7 +28,7 @@ class JobOfferController
     public function requestAddNew($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote = "", $active = "")
     {
 
-        $jobOffer = $this->jobOfferFactory((int)$id_company, (int)$id_career,(int) $id_jobPosition, $title, $description, $isRemote, $active);
+        $jobOffer = $this->jobOfferFactory((int)$id_company, (int)$id_career, (int) $id_jobPosition, $title, $description, $isRemote, $active);
 
         if (!$this->jobOfferDAO->find($jobOffer))
         {
@@ -69,8 +69,10 @@ class JobOfferController
 
         $jobOfferList = $this->jobOfferDAO->getAll();
 
-		if (isset($jobOfferList)) {
-			foreach ($jobOfferList as $jobOffer) {
+        if (isset($jobOfferList))
+        {
+            foreach ($jobOfferList as $jobOffer)
+            {
 
                 $company = new Company();
                 $company = $this->companyDAO->getById($jobOffer->getId_company());
@@ -78,18 +80,19 @@ class JobOfferController
                 $jobPosition = new JobPosition();
                 $jobPosition = $this->jobPositionDAO->getById($jobOffer->getId_jobPosition());
 
-				$list[$jobOffer->getId_jobOffer()] = array(
-					'title' => $jobOffer->getTitle(),
-					'companyName' => $company->getName(),
+                $list[$jobOffer->getId_jobOffer()] = array(
+                    'title' => $jobOffer->getTitle(),
+                    'companyName' => $company->getName(),
                     'jobPositionTitle' => $jobPosition->getDescription()
-				);
-			}
-		}
+                );
+            }
+        }
 
         require_once(VIEWS_PATH . 'job-offer-list.php');
     }
 
-    public function studentRequestJobOfferDetails($id_jobOffer){
+    public function studentRequestJobOfferDetails($id_jobOffer)
+    {
 
         $jobOffer = new JobOffer();
 
@@ -97,15 +100,53 @@ class JobOfferController
 
         $companyName = $this->companyDAO->getNameById($jobOffer->getId_company());
 
-        $jobPosition = $this->jobPositionDAO->getTitleById($jobOffer->getId_jobPosition());
+        $jobPositionTitle = $this->jobPositionDAO->getTitleById($jobOffer->getId_jobPosition());
 
-        require_once(VIEWS_PATH.'job-offer-detail.php');
+        require_once(VIEWS_PATH . 'job-offer-detail.php');
     }
 
     public function downloadOffers()
     {
 
         $this->jobOfferDAO->downloadOffer();
+    }
+
+    public function studentRequestApply($file)
+    {
+        try
+        {
+            $fileName = $file["name"];
+            $tempFileName = $file["tmp_name"];
+            $type = $file["type"];
+
+            $filePath = UPLOADS_PATH . basename($fileName);
+
+            $fileType = strtolower(pathinfo($filePath, PATHINFO_EXTENSION));
+
+            $imageSize = getimagesize($tempFileName);
+
+            if ($imageSize !== false)
+            {
+                if (move_uploaded_file($tempFileName, $filePath))
+                {
+                    $image = new Image();
+                    $image->setName($fileName);
+                    $this->imageDAO->Add($image);
+
+                    $message = "Imagen subida correctamente";
+                }
+                else
+                    $message = "Ocurrió un error al intentar subir la imagen";
+            }
+            else
+                $message = "El archivo no corresponde a una imágen";
+        }
+        catch (Exception $ex)
+        {
+            $message = $ex->getMessage();
+        }
+
+        $this->ShowListView($message);
     }
 
     private function jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active)
