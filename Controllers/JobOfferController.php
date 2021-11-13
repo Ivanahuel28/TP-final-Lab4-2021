@@ -186,6 +186,14 @@ class JobOfferController
         return $jobOffer;
     }
 
+    public function adminRequestJobOfferDetails($id_jobOffer = ""){
+        
+    }
+
+    public function adminRequestJobOfferEdit($id_jobOffer = ""){
+
+    }
+
     private function printAlertAlreadyExist()
     {
         echo '
