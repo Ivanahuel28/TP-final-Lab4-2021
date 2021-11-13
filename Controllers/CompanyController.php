@@ -51,7 +51,7 @@ class CompanyController
         require_once(VIEWS_PATH . 'company-info.php');
     }
 
-    public function add($cuit, $name, $role,$description,$link, $active = false)
+    public function add($cuit, $name, $role,$description,$link = "", $active = false)
     {
         if (is_numeric($cuit) && strlen($cuit))
         {

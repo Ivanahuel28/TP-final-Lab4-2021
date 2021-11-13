@@ -2,6 +2,7 @@
 
 namespace Controllers;
 
+use DAO\ApplicationDAO;
 use DAO\CareerDAO;
 use DAO\CompanyDAO as CompanyDAO;
 use DAO\JobOfferDAO;
@@ -9,6 +10,8 @@ use DAO\JobPositionDAO;
 use Models\Company;
 use Models\JobOffer;
 use Models\JobPosition;
+use Exception;
+use Models\Application;
 
 class JobOfferController
 {
@@ -16,6 +19,7 @@ class JobOfferController
     private $companyDAO;
     private $careerDAO;
     private $jobPositionDAO;
+    private $applicationDAO;
 
     public function __construct()
     {
@@ -23,6 +27,7 @@ class JobOfferController
         $this->companyDAO = new CompanyDAO();
         $this->careerDAO = new CareerDAO();
         $this->jobPositionDAO = new JobPositionDAO();
+        $this->applicationDAO = new ApplicationDAO();
     }
 
     public function requestAddNew($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote = "", $active = "")
@@ -111,10 +116,53 @@ class JobOfferController
         $this->jobOfferDAO->downloadOffer();
     }
 
-    public function studentRequestApply($id_jobOffer)
+    public function studentRequestApply($id_jobOffer, $file)
     {
+        $application = new Application();
 
-        //$_SESSION['user']->get
+        $application->setId_jobOffer((int)$id_jobOffer);
+        $application->setId_user((int)$_SESSION['user']->getId());
+
+        if (!$this->applicationDAO->getId($application)) // busca si existe postulacion de ese usario a esa oferta
+        {
+            try
+            {
+                $fileName = $file["name"];
+                $tempFileName = $file["tmp_name"];
+                $type = $file["type"];
+
+                $filePath = STUDENT_CV_PATH . basename($fileName);
+
+                $imageSize = getimagesize($tempFileName);
+
+                if (in_array(strtolower(pathinfo($filePath, PATHINFO_EXTENSION)), array("doc", "docx", "pdf")))
+                {
+                    if (move_uploaded_file($tempFileName, $filePath))
+                    {
+
+                        $application->setFilePath($filePath);
+                        $application->setDate(date('Y-m-d H:i:s'));
+
+                        if ($this->applicationDAO->add($application))
+                        {
+                            $this->printAlertMessageOnTop("success", "Aplicacion realizada con exito", "Felicitaciones");
+                        }
+                    }
+                }
+                else
+                    $this->printAlertMessageOnTop("warning", "Los tipos de archivo soportados son: .doc, .docx o .pdf", "Error");
+            }
+            catch (Exception $ex)
+            {
+                $this->printAlertMessageOnTop("warning", "No pudo completarse la operacion", "Error!");
+            }
+        }
+        else
+        {
+            $this->printAlertMessageOnTop("warning", "Usted ya se ha postulado  a esta oferta", "Atencion!");
+        }
+
+        $this->studentRequestJobOfferDetails($id_jobOffer);
     }
 
     private function jobOfferFactory($id_company, $id_career, $id_jobPosition, $title, $description, $isRemote, $active)
@@ -151,6 +199,15 @@ class JobOfferController
         echo '
 		<div class="alert alert-success alert-dismissible fade show" role="alert">
 			 <strong>Felicidades!</strong>  Oferta laboral creada con exito :)
+			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+	  	</div>';
+    }
+
+    private function printAlertMessageOnTop($type = "secondary",  $message = "", $strong = "")
+    {
+        echo '
+		<div class="alert alert-' . $type . ' alert-dismissible fade show" role="alert">
+			 <strong>' . $strong . '</strong> ' . $message . '
 			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	  	</div>';
     }
