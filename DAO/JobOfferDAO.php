@@ -142,10 +142,7 @@ class JobOfferDAO implements IntfJobOfferDAO
 			 No hay ofertas que descargar.
 			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
 	  	    </div>';
-            require_once(VIEWS_PATH . 'job-offer-list.php');
         }
-
-        exit;
     }
 
     public function getAllActivesByCareer($id_career)

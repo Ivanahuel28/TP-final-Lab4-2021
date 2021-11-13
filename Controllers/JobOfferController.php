@@ -112,8 +112,9 @@ class JobOfferController
 
     public function downloadOffers()
     {
-
         $this->jobOfferDAO->downloadOffer();
+
+        $this->renderJobOfferList();
     }
 
     public function studentRequestApply($id_jobOffer, $file)
