@@ -96,6 +96,21 @@ class JobOfferController
         require_once(VIEWS_PATH . 'job-offer-list.php');
     }
 
+    public function renderModifyJobOffer($id_jobOffer){
+
+        $id_jobOffer = (int) $id_jobOffer;
+
+        $jobOffer = new JobOffer();
+
+        $jobOffer = $this->jobOfferDAO->getById($id_jobOffer);
+
+        $companyName = $this->companyDAO->getById($jobOffer->getId_company())->getName();
+        $careerTitle = $this->careerDAO->getById($jobOffer->getId_career())->getDescription();
+        $jobPositionTitle = $this->jobPositionDAO->getById($jobOffer->getId_jobPosition())->getDescription();
+
+        require_once(VIEWS_PATH . 'job-offer-edit.php');
+    }
+
     public function studentRequestJobOfferDetails($id_jobOffer)
     {
 
@@ -186,12 +201,32 @@ class JobOfferController
         return $jobOffer;
     }
 
-    public function adminRequestJobOfferDetails($id_jobOffer = ""){
-        
+    public function adminRequestJobOfferDetails($id_jobOffer = "")
+    {
     }
 
-    public function adminRequestJobOfferEdit($id_jobOffer = ""){
+    public function adminRequestJobOfferEdit($id_jobOffer, $title, $description, $isRemote = "", $active = "")
+    {
+        $id_jobOffer = (int)$id_jobOffer;
+        $jobOffer = new JobOffer();
 
+        $jobOffer = $this->jobOfferDAO->getById($id_jobOffer);
+
+        $jobOffer->setTitle($title);
+        $jobOffer->setDescription($description);
+        $jobOffer->setRemote($isRemote === "true");
+        $jobOffer->setActive($active === "true");
+
+        if ($this->jobOfferDAO->update($jobOffer))
+        {
+            $this->printAlertMessageOnTop("success","Oferta actualizada con exito","Felicidades");
+        }
+        else
+        {
+            $this->printAlertMessageOnTop("warning","No se pudo actualizar la oferta","Error!");
+        }
+
+        $this->renderJobOfferList();
     }
 
     private function printAlertAlreadyExist()

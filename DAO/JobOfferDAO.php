@@ -212,6 +212,38 @@ class JobOfferDAO implements IntfJobOfferDAO
         $jobOffer->setRemote(($queryResult['remote'] !== "0") ? true : false);
         $jobOffer->setActive(($queryResult['active'] !== "0") ? true : false);
     }
+
+    public function update(JobOffer $jobOffer){
+
+        try{
+
+            $query = "UPDATE " . $this->tableName .
+                    " SET
+                        title = :title,
+                        description = :description,
+                        remote = :remote,
+                        active = :active 
+                    WHERE id_job_offer = :id_job_offer";
+    
+            $parameters['id_job_offer'] = $jobOffer->getId_jobOffer();
+            $parameters['title'] = $jobOffer->getTitle();
+            $parameters['description'] = $jobOffer->getDescription();
+            $parameters['remote'] = $jobOffer->getRemote();
+            $parameters['active'] = $jobOffer->getActive();
+    
+            $connection = Connection::GetInstance();
+    
+            $connection->ExecuteNonQuery($query, $parameters);
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            return false;
+        }
+
+    }
+
     private function showErrorMsg(Exception $ex)
     {
         echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';
