@@ -83,6 +83,10 @@ class CompanyDAO implements IntfCompanyDAO
 			{
 				$this->createCompany($company, $queryResult[0]);
 			}
+			else
+			{
+				return null;
+			}
 		}
 		catch (Exception $ex)
 		{

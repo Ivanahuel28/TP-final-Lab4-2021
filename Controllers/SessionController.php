@@ -5,27 +5,33 @@ namespace Controllers;
 use DAO\StudentDAO;
 use DAO\UserDAO;
 use Models\User;
+use DAO\CompanyDAO;
+use Models\Student;
 
 class SessionController
 {
     const ADMIN = 'admin';
     const USER = 'user';
     const STUDENT = 'student';
+    const COMPANY = 'company';
 
     private $userDAO;
     private $studentDAO;
+    private $companyDAO;
 
     public function __construct()
     {
         $this->userDAO = new UserDAO();
         $this->studentDAO = new StudentDAO();
+        $this->companyDAO = new CompanyDAO();
     }
 
     public function loginRequest($username, $password)
     {
         $user = $this->userDAO->getUser($username, $password);
 
-        switch ($user->getUserType()) {
+        switch ($user->getUserType())
+        {
             case self::ADMIN:
                 $this->setSessionAndRedirect($user);
                 break;
@@ -33,28 +39,70 @@ class SessionController
                 $student = $this->studentDAO->getByEmail($username);
                 $student->getActive() ? $this->setSessionAndRedirect($user) : $this->rejectLogin("El estudiante no se encuentra activo");
                 break;
+            case self::COMPANY:
+                $this->setSessionAndRedirect($user);
+                break;
             default:
                 $this->rejectLogin("Usuario o contraseña incorrectos");
                 break;
         }
     }
 
-    public function registerUser($username, $password, $securityAnswer)
+    public function requestRegisterUser($username, $password, $userType, $securityAnswer)
     {
-        if ($this->userDAO->userIsRegistrated($username)) {
+        if (!$this->userDAO->userIsRegistrated($username)) // comprueba si no esta registrado
+        {
+            $flag = false;
+            switch ($userType)
+            {
+                case 'company':
+                    if ($this->companyDAO->getByCuit($username))
+                        $flag = true;
+                    else
+                        $message = "No hay una empresa con es cuit activa en el sistema";
+                    break;
+                case 'student':
+                    if ($this->studentDAO->getByEmail($username))
+                        $flag = true;
+                    else
+                        $message = "No hay una alumno con ese correo activo en el sistema";
+                    break;
+                case 'admin':
+                    if ($username === 'admin')
+                        $flag = true;
+                    else
+                        $message = "no es posible crear el usuario";
+                    break;
+
+                default:
+                    $message = "no es posible crear el usuario";
+                    break;
+            }
+            
+            if ($flag)
+            {
+                $user = $this->userDAO->createUser($username, $password, $userType, $securityAnswer);
+                $this->setSessionAndRedirect($user);
+            }
+            else
+            {
+                $this->rejectLogin($message);
+            }
+        }
+        else
+        {
             $this->rejectLogin("El usuario ya se encuentra registrado");
-        } else {
-            $student = $this->studentDAO->getByEmail($username);
-            $user = $this->userDAO->createUser($username, $password, !($student === null), $securityAnswer);
-            $this->setSessionAndRedirect($user);
         }
     }
 
     public function recoverPassword($username, $password, $securityAnswer)
     {
-        if (!$this->userDAO->securityAnswerMatch($username, $securityAnswer)) {
+        if (!$this->userDAO->securityAnswerMatch($username, $securityAnswer))
+        {
             $this->rejectLogin("No hay ningun usuario registrado con esas caracterisitcas");
-        } else {
+        }
+        else
+        {
             $this->userDAO->updateUserPassword($username, $password);
             echo '<div class="alert alert-success position-absolute alert-fixed" role="alert">Contraseña actualizada con exito</div>';
             $this->renderLoginView();
@@ -91,6 +139,5 @@ class SessionController
         echo '
                <div class="alert alert-warning position-absolute alert-fixed" role="alert">' . $errorMsg . '</div>
          ';
-
     }
 }
