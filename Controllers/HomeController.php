@@ -13,6 +13,8 @@ use Models\User;
 class HomeController
 {
     private $jobOfferDAO;
+    private $studentDAO;
+    private $companyDAO;
 
     public function __construct()
     {
@@ -80,6 +82,9 @@ class HomeController
 
     public function renderCompanyHome()
     {
+        $company = new Company();
+        $company =  $this->companyDAO->getByCuit($_SESSION['user']->getUsername());
+
         require_once(VIEWS_PATH . 'company-home.php');
     }
 
