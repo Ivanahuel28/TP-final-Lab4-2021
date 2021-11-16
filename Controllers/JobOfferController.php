@@ -96,7 +96,8 @@ class JobOfferController
         require_once(VIEWS_PATH . 'job-offer-list.php');
     }
 
-    public function renderModifyJobOffer($id_jobOffer){
+    public function renderModifyJobOffer($id_jobOffer)
+    {
 
         $id_jobOffer = (int) $id_jobOffer;
 
@@ -224,11 +225,11 @@ class JobOfferController
 
         if ($this->jobOfferDAO->update($jobOffer))
         {
-            $this->printAlertMessageOnTop("success","Oferta actualizada con exito","Felicidades");
+            $this->printAlertMessageOnTop("success", "Oferta actualizada con exito", "Felicidades");
         }
         else
         {
-            $this->printAlertMessageOnTop("warning","No se pudo actualizar la oferta","Error!");
+            $this->printAlertMessageOnTop("warning", "No se pudo actualizar la oferta", "Error!");
         }
 
         $this->renderJobOfferList();

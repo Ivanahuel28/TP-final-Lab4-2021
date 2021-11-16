@@ -15,3 +15,4 @@ define("DB_NAME", "utnjobs");
 define("DB_USER", "root");
 define("DB_PASS", "");
 define("STUDENT_CV_PATH", "Data/CVs/");
+define("COMPANY_IMG_PATH", "Data/companiesImages/");

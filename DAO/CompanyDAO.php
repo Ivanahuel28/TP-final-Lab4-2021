@@ -130,6 +130,7 @@ class CompanyDAO implements IntfCompanyDAO
 					company_role = :company_role,
 					description = :description,
 					link = :link,
+					img_path = :img_path,
 					active = :active 
 				WHERE cuit = :cuit";
 
@@ -142,6 +143,7 @@ class CompanyDAO implements IntfCompanyDAO
 			$parameters['link'] = ($company->getLink()) ?: "";
 			$parameters['active'] = ($company->getActive()) ? 1 : 0;
 			$parameters['cuit'] = $company->getCuit();
+			$parameters['img_path'] = $company->getImg_path();
 
 			$connection = Connection::GetInstance();
 
@@ -209,6 +211,7 @@ class CompanyDAO implements IntfCompanyDAO
 		$company->setDescription($queryResult['description']);
 		$company->setLink($queryResult['link']);
 		$company->setActive(!($queryResult['active'] == "0"));
+		$company->setImg_path($queryResult['img_path']);
 	}
 
 	public function getById($id)

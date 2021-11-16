@@ -30,22 +30,29 @@ class SessionController
     {
         $user = $this->userDAO->getUser($username, $password);
 
-        switch ($user->getUserType())
+        if ($user)
         {
-            case self::ADMIN:
-                $this->setSessionAndRedirect($user);
-                break;
-            case self::STUDENT:
-                $student = $this->studentDAO->getByEmail($username);
-                $student->getActive() ? $this->setSessionAndRedirect($user) : $this->rejectLogin("El estudiante no se encuentra activo");
-                break;
-            case self::COMPANY:
-                $this->setSessionAndRedirect($user);
-                break;
-            default:
-                $this->rejectLogin("Usuario o contraseña incorrectos");
-                break;
+            switch ($user->getUserType())
+            {
+                case self::ADMIN:
+                    $this->setSessionAndRedirect($user);
+                    break;
+                case self::STUDENT:
+                    $student = $this->studentDAO->getByEmail($username);
+                    if ($student->getActive())
+                        $this->setSessionAndRedirect($user);
+                    else
+                        $this->rejectLogin("El estudiante no se encuentra activo");
+                    break;
+                case self::COMPANY:
+                    $this->setSessionAndRedirect($user);
+                    break;
+                default:
+                    break;
+            }
         }
+        else
+            $this->rejectLogin("Usuario o contraseña incorrectos");
     }
 
     public function requestRegisterUser($username, $password, $userType, $securityAnswer)
@@ -78,7 +85,7 @@ class SessionController
                     $message = "no es posible crear el usuario";
                     break;
             }
-            
+
             if ($flag)
             {
                 $user = $this->userDAO->createUser($username, $password, $userType, $securityAnswer);
@@ -122,7 +129,7 @@ class SessionController
 
     private function setSessionAndRedirect(User $user)
     {
-        $_SESSION[self::USER] = $user;
+        $_SESSION['user'] = $user;
         header('Location: ' . FRONT_ROOT);
     }
 
