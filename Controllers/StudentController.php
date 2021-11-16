@@ -16,4 +16,10 @@ class StudentController {
 		$student = $this->studentDAO->getByEmail($_SESSION['user']->getUsername());
 		require_once(VIEWS_PATH.'student-personal-data.php');
 	}
+
+    public function searchStudent()
+    {
+        $studentList = $this->studentDAO->getAll();
+        require_once(VIEWS_PATH.'students-search.php');
+    }
 }

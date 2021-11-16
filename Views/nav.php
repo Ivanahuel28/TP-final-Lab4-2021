@@ -11,7 +11,7 @@
 					<?php
 					switch ($_SESSION['user']->getUserType())
 					{
-						case 'student': ?>
+						case 'admin': ?>
 							<li class="nav-item">
 								<a class="nav-link" href="<?php echo FRONT_ROOT ?>Company/showCompaniesView"><strong>Empresas</strong> </a>
 							</li>
@@ -21,9 +21,12 @@
 							<li class="nav-item">
 								<a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/downloadOffers"><strong>Descargar ofertas Laborales</strong> </a>
 							</li>
+                            <li class="nav-item">
+								<a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/searchStudent"><strong>Buscar estudiantes</strong> </a>
+							</li>
 						<?php
 							break;
-						case 'admin': ?>
+						case 'student': ?>
 
 							<li class="nav-item">
 								<a class="nav-link" aria-current="page" href="<?php echo FRONT_ROOT ?>Student/renderPersonalData"><strong>Info personal</strong></a>
