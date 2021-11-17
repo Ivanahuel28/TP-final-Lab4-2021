@@ -5,6 +5,7 @@ namespace DAO;
 use DAO\IntfApplicationDAO;
 use Exception;
 use Models\Application;
+use Models\Student;
 
 class ApplicationDAO implements IntfApplicationDAO
 {
@@ -42,6 +43,25 @@ class ApplicationDAO implements IntfApplicationDAO
         } */
     }
 
+
+    public function getApplicationsByUser(Student $student){
+
+        try {
+            $query = "SELECT * FROM " . $this->tableName . " WHERE id_user = :id_user ;";
+            $connection = Connection::GetInstance();
+
+            $parameters['id_user'] = $student->getId();
+
+            $queryResult = $connection->Execute($query,$parameters);
+
+            if (!empty($queryResult)) {
+                return $queryResult[0]; // <--------- return
+            }
+        } catch (Exception $ex) {
+            return null;
+        }
+    }
+
     public function getId(Application $application)
     {
 
@@ -57,7 +77,7 @@ class ApplicationDAO implements IntfApplicationDAO
 
             if (!empty($queryResult))
             {
-                return $queryResult[0]; // <--------- return 
+                return $queryResult[0]; // <--------- return
             }
         }
         catch (Exception $ex)

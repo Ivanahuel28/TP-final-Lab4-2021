@@ -1,14 +1,17 @@
 <?php
 
 namespace Controllers;
+use DAO\ApplicationDAO;
 use DAO\StudentDAO as StudentDAO;
 
 class StudentController {
 
 	private $studentDAO;
+	private $applicationsDAO;
 
 	public function __construct() {
 		$this->studentDAO = new StudentDAO();
+		$this->applicationsDAO = new ApplicationDAO();
 	}
 
 	public function renderPersonalData(){
@@ -21,5 +24,11 @@ class StudentController {
     {
         $studentList = $this->studentDAO->getAll();
         require_once(VIEWS_PATH.'students-search.php');
+    }
+
+    public function showStudentPostulations($student)
+    {
+        $applications = $this->applicationsDAO->getApplicationsByUser($student);
+        require_once(VIEWS_PATH.'applications-list.php');
     }
 }

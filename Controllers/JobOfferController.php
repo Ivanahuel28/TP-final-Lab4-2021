@@ -145,6 +145,11 @@ class JobOfferController
         $this->renderSearchStudent();
     } */
 
+    public function searchStudent()
+    {
+        $this->renderSearchStudent();
+    }
+
     public function studentRequestApply($id_jobOffer, $file)
     {
         $application = new Application();
