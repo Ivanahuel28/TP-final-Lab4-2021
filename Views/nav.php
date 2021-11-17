@@ -21,7 +21,7 @@
 							<li class="nav-item">
 								<a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/downloadOffers"><strong>Descargar ofertas Laborales</strong> </a>
 							</li>
-                            <li class="nav-item">
+							<li class="nav-item">
 								<a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/searchStudent"><strong>Buscar estudiantes</strong> </a>
 							</li>
 						<?php
@@ -38,7 +38,9 @@
 							break;
 						case 'company': ?>
 
-							<!-- Posibles botones!!! -->
+							<li class="nav-item">
+								<a class="nav-link" aria-current="page" href="<?php echo FRONT_ROOT ?>Company/showViewEditCompany/<?php echo $_SESSION['user']->getUsername() ?>"><strong>Perfil</strong></a>
+							</li>
 
 					<?php
 							break;

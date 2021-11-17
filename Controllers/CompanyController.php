@@ -90,7 +90,7 @@ class CompanyController
         $this->showCompaniesView();
     }
 
-    public function companyExecuteEditProfile($cuit, $name, $role = "", $description = "", $link = "", $active, $file)
+    public function companyExecuteEditProfile($cuit, $name, $active, $file, $role = "", $description = "", $link = "")
     {
 
         try
@@ -115,10 +115,11 @@ class CompanyController
                     $companyToEdit->setRole($role);
                     $companyToEdit->setDescription($description);
                     $companyToEdit->setLink($link);
-                    $companyToEdit->setActive($active === "true");
+                    $companyToEdit->setActive($active === "1");
                     $companyToEdit->setImg_path($filePath);
 
                     $this->companyDAO->update($companyToEdit);
+                    $this->printAlertMessageOnTop("success", "Compañia modificada con exito", "Felicidades!");
                 }
                 else
                     $this->printAlertMessageOnTop("warning", "ocurrio un problema al subir la imagen", "Error");
@@ -130,7 +131,9 @@ class CompanyController
         {
             $message = $ex->getMessage();
         }
-        //$this->showCompaniesView();
+
+        
+        $this->showViewEditCompany((int)$cuit);
     }
 
     public function executeDeleteCompany($cuit)

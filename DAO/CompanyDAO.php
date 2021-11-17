@@ -210,7 +210,7 @@ class CompanyDAO implements IntfCompanyDAO
 		$company->setRole($queryResult['company_role']);
 		$company->setDescription($queryResult['description']);
 		$company->setLink($queryResult['link']);
-		$company->setActive(!($queryResult['active'] == "0"));
+		$company->setActive(($queryResult['active'] !== "0") ? true : false);
 		$company->setImg_path($queryResult['img_path']);
 	}
 
