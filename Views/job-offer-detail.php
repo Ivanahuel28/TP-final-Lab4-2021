@@ -41,7 +41,22 @@ require_once('nav.php');
                     <button type="submit" class="btn btn-success btn-lg px-4">Aplicar</button>
                 </div>
             </div>
-        <?php } ?>
+        <?php }
+        else
+        {
+        ?>
+
+            <div class="form-group d-flex justify-content-start">
+                <div class="mb-5">
+                    <a name="action" onclick="history.back()" type="submit" class="btn btn-secondary btn-lg mx-3 px-4">Volver</a>
+                </div>
+                <div class="mb-5">
+                    <a href="<?php echo FRONT_ROOT ?>Application/executeDownloadApplicants" class="btn btn-success btn-lg px-4">Descargar Postulantes</a>
+                </div>
+            </div>
+
+        <?php
+        } ?>
     </form>
 
 </div>
