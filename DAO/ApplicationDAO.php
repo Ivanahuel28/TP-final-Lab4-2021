@@ -99,16 +99,16 @@ class ApplicationDAO implements IntfApplicationDAO
 
         if ($queryResult)
         {
-            foreach ($queryResult as $queryResult)
+            foreach ($queryResult as $row)
             {
 
                 $application = new Application();
 
-                $application->setId_application((int)$queryResult['id_application']);
-                $application->setId_user((int)$queryResult['id_user']);
-                $application->setId_jobOffer((int)$queryResult['id_job_offer']);
-                $application->setDate($queryResult['application_datetime']);
-                $application->setFilePath($queryResult['file_path']);
+                $application->setId_application((int)$row['id_application']);
+                $application->setId_user((int)$row['id_user']);
+                $application->setId_jobOffer((int)$row['id_job_offer']);
+                $application->setDate($row['application_datetime']);
+                $application->setFilePath($row['file_path']);
 
                 array_push($applicationList, $application);
             }

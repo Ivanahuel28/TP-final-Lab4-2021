@@ -128,9 +128,20 @@ class JobOfferController
 
     public function adminRequestJobOfferDetails($id_jobOffer)
     {
+        
+        $jobOffer = new JobOffer();
+        
+        $jobOffer = $this->jobOfferDAO->getById($id_jobOffer);
+        
+        $company = $this->companyDAO->getById($jobOffer->getId_company());
+        
+        $jobPositionTitle = $this->jobPositionDAO->getTitleById($jobOffer->getId_jobPosition());
+        
         $applicationList = $this->applicationDAO->getApplyListByJobOffer($id_jobOffer);
 
-        $this->studentRequestJobOfferDetails($id_jobOffer);
+        
+
+        require_once(VIEWS_PATH . 'job-offer-detail.php');
     }
 
     public function downloadOffers()
@@ -145,10 +156,10 @@ class JobOfferController
         $this->renderSearchStudent();
     } */
 
-    public function searchStudent()
+    /* public function searchStudent()
     {
         $this->renderSearchStudent();
-    }
+    } */
 
     public function studentRequestApply($id_jobOffer, $file)
     {
