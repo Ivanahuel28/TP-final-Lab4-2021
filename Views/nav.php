@@ -18,7 +18,7 @@
 							<li class="nav-item">
 								<a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/renderJobOfferList"><strong>Ofertas Laborales</strong> </a>
 							</li>
-							<li class="nav-item">
+							<!-- <li class="nav-item">
 								<a class="nav-link" href="<?php echo FRONT_ROOT ?>JobOffer/downloadOffers"><strong>Descargar ofertas Laborales</strong> </a>
 							</li>
                             <li class="nav-item">
@@ -26,7 +26,7 @@
 							</li>
 							<li class="nav-item">
 								<a class="nav-link" href="<?php echo FRONT_ROOT ?>Student/showStudentPostulations"><strong>Ver postulaciones</strong> </a>
-							</li>
+							</li> -->
 						<?php
 							break;
 						case 'student': ?>
