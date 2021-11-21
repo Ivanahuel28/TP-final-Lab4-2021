@@ -3,6 +3,7 @@
 namespace DAO;
 
 use DAO\IntfStudentDAO as IntfStudentDAO;
+use Exception;
 use Models\Student as Student;
 
 class StudentDAO implements IntfStudentDAO
@@ -48,6 +49,7 @@ class StudentDAO implements IntfStudentDAO
 
     private function retrieveData()
     {
+        $this->studentList = array();
 
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, 'https://utn-students-api.herokuapp.com/api/Student');
@@ -58,9 +60,18 @@ class StudentDAO implements IntfStudentDAO
 
         curl_close($curl);
 
-        $arrayToDecode = ($data) ? json_decode($data, true) : array();;
+        $arrayToDecode = ($data) ? json_decode($data, true) : array();
 
-        $this->studentList = array();
+        if ($arrayToDecode === null) /* si no puede armar el array por JSON utilizo el backup */
+        {
+            $arrayToDecode = $this->useBackup();
+        }
+        else /* Si hay datos actualizo el backup */
+        {
+            $jsonContent = json_encode($arrayToDecode, JSON_PRETTY_PRINT);
+
+            file_put_contents(API_BACKUP_PATH . 'students.json', $jsonContent);
+        }
 
         foreach ($arrayToDecode as $valuesArray)
         {
@@ -80,5 +91,17 @@ class StudentDAO implements IntfStudentDAO
 
             array_push($this->studentList, $student);
         }
+    }
+
+    public function useBackup()
+    {
+        if (file_exists(API_BACKUP_PATH . 'students.json'))
+        {
+            $jsonContent = file_get_contents(API_BACKUP_PATH . 'students.json');
+
+            $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
+        }
+
+        return $arrayToDecode;
     }
 }

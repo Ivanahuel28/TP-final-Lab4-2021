@@ -87,7 +87,9 @@ class JobPositionDAO implements IntfJobPositionDAO
 	private function retrieveData()
 	{
 
+		$this->jobPositionList = array();
 		$curl = curl_init();
+
 		curl_setopt($curl, CURLOPT_URL, 'https://utn-students-api.herokuapp.com/api/JobPosition');
 		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($curl, CURLOPT_HTTPHEADER, array('x-api-key: 4f3bceed-50ba-4461-a910-518598664c08'));
@@ -98,7 +100,17 @@ class JobPositionDAO implements IntfJobPositionDAO
 
 		$arrayToDecode = ($data) ? json_decode($data, true) : array();
 
-		$this->jobPositionList = array();
+		if ($arrayToDecode === null) /* si no puede armar el array por JSON utilizo el backup */
+        {
+            $arrayToDecode = $this->useBackup();
+        }
+        else /* Si hay datos actualizo el backup */
+        {
+            $jsonContent = json_encode($arrayToDecode, JSON_PRETTY_PRINT);
+
+            file_put_contents(API_BACKUP_PATH . 'jobPositions.json', $jsonContent);
+        }
+
 
 		foreach ($arrayToDecode as $valuesArray)
 		{
@@ -112,4 +124,16 @@ class JobPositionDAO implements IntfJobPositionDAO
 			array_push($this->jobPositionList, $jobPosition);
 		}
 	}
+
+	public function useBackup()
+    {
+        if (file_exists(API_BACKUP_PATH . 'jobPositions.json'))
+        {
+            $jsonContent = file_get_contents(API_BACKUP_PATH . 'jobPositions.json');
+
+            $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
+        }
+
+        return $arrayToDecode;
+    }
 }

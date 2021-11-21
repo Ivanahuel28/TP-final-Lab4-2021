@@ -65,7 +65,8 @@ class CareerDAO implements IntfCareerDAO
 	}
 
 	private function retrieveData()
-	{
+	{	
+		$this->careerList = array();
 
 		$curl = curl_init();
 		curl_setopt($curl, CURLOPT_URL, 'https://utn-students-api.herokuapp.com/api/Career');
@@ -78,7 +79,16 @@ class CareerDAO implements IntfCareerDAO
 
 		$arrayToDecode = ($data) ? json_decode($data, true) : array();
 
-		$this->careerList = array();
+		if ($arrayToDecode === null) /* si no puede armar el array por JSON utilizo el backup */
+        {
+            $arrayToDecode = $this->useBackup();
+        }
+        else /* Si hay datos actualizo el backup */
+        {
+            $jsonContent = json_encode($arrayToDecode, JSON_PRETTY_PRINT);
+
+            file_put_contents(API_BACKUP_PATH . 'careers.json', $jsonContent);
+        }
 
 		foreach ($arrayToDecode as $valuesArray)
 		{
@@ -91,4 +101,16 @@ class CareerDAO implements IntfCareerDAO
 			array_push($this->careerList, $career);
 		}
 	}
+
+	public function useBackup()
+    {
+        if (file_exists(API_BACKUP_PATH . 'careers.json'))
+        {
+            $jsonContent = file_get_contents(API_BACKUP_PATH . 'careers.json');
+
+            $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
+        }
+
+        return $arrayToDecode;
+    }
 }
