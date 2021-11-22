@@ -4,6 +4,7 @@ namespace DAO;
 
 use DAO\IntfUserDAO as IntfUserDAO;
 use DAO\Connection as Connection;
+use Exception;
 use Models\User;
 
 class UserDAO implements IntfUserDAO
@@ -51,7 +52,7 @@ class UserDAO implements IntfUserDAO
         return (bool)$queryResult;
     }
 
-    public function createUser($username, $password, $isStudent, $securityAnswer)
+    public function createUser($username, $password, $userType, $securityAnswer)
     {
         $user = new User();
         $query = "INSERT INTO " . $this->tableName . " (username,password,user_type, security_answer)
@@ -59,7 +60,7 @@ class UserDAO implements IntfUserDAO
         $connection = Connection::GetInstance();
         $parameters['username'] = $username;
         $parameters['password'] = password_hash($password, PASSWORD_DEFAULT);
-        $parameters['user_type'] = $isStudent ? 'student' : 'admin';
+        $parameters['user_type'] = $userType;
         $parameters['security_answer'] = $securityAnswer;
 
         $queryResult = $connection->ExecuteNonQuery($query, $parameters);
@@ -83,5 +84,34 @@ class UserDAO implements IntfUserDAO
             $user = $this->getUser($username, $password);
         }
         return $user;
+    }
+
+    public function getUsernamesByIdList($idList)
+    {
+        try
+        {
+            $userList = array();
+    
+            $query = "SELECT username FROM " . $this->tableName . ' WHERE id_user IN ('. implode(",",$idList) .');';
+    
+            // $parameters['id_list'] = array();
+            // foreach ($idList as $id) {
+            //     array_push($parameters['id_list'],$id);
+            // }
+    
+            $connection = Connection::GetInstance();
+            $queryResult = $connection->Execute($query);
+    
+            if ($queryResult) {
+                foreach ($queryResult as $username) {
+                    array_push($userList,$username['username']);
+                }
+            }
+    
+            return $userList;
+
+        }catch(Exception $e){
+            return null;
+        }
     }
 }

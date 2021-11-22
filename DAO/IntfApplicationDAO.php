@@ -5,5 +5,6 @@ namespace DAO;
 use Models\Application;
 
 interface IntfApplicationDAO{
-	public function save(Application $application);
+	public function add(Application $application);
+	public function getId(Application $application);
 }

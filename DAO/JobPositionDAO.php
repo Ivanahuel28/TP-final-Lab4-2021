@@ -6,44 +6,54 @@ use DAO\IntfJobPositionDAO as IntfJobPositionDAO;
 use Models\JobPosition as JobPosition;
 
 
-class JobPositionDAO implements IntfJobPositionDAO {
+class JobPositionDAO implements IntfJobPositionDAO
+{
 
 	private $jobPositionList;
 
-	public function getAll() {
+	public function getAll()
+	{
 
 		$this->retrieveData();
 
 		return $this->jobPositionList;
 	}
 
-	public function getAllByCareerId($id_career){
+	public function getAllByCareerId($id_career)
+	{
 
 		$this->retrieveData();
 
 		$filteredList = array();
 
-		foreach ($this->jobPositionList as $jobPosition) {
-			
-			if($jobPosition->getId_career() === $id_career){
-				array_push($filteredList,$jobPosition);
+		foreach ($this->jobPositionList as $jobPosition)
+		{
+
+			if ($jobPosition->getId_career() === $id_career)
+			{
+				array_push($filteredList, $jobPosition);
 			}
 		}
 
 		return $filteredList;
 	}
 
-	public function getById($id){
-		
+	public function getById($id)
+	{
+
 		$this->retrieveData();
 
 		$jobPositionToReturn = null;
 		$i = 0;
 
-		while (!$jobPositionToReturn && $i < count($this->jobPositionList)) {
-			if ($id == $this->jobPositionList[$i]->getId_jobPosition()) {
+		while (!$jobPositionToReturn && $i < count($this->jobPositionList))
+		{
+			if ($id == $this->jobPositionList[$i]->getId_jobPosition())
+			{
 				$jobPositionToReturn = $this->jobPositionList[$i];
-			} else {
+			}
+			else
+			{
 				$i++;
 			}
 		}
@@ -51,17 +61,22 @@ class JobPositionDAO implements IntfJobPositionDAO {
 		return $jobPositionToReturn;
 	}
 
-	public function getTitleById($id){
+	public function getTitleById($id)
+	{
 
 		$this->retrieveData();
 
 		$title = null;
-		$i=0;
+		$i = 0;
 
-		while (!$title && $i < count($this->jobPositionList)) {
-			if ($id === $this->jobPositionList[$i]->getId_jobPosition()) {
+		while (!$title && $i < count($this->jobPositionList))
+		{
+			if ($id === $this->jobPositionList[$i]->getId_jobPosition())
+			{
 				$title = $this->jobPositionList[$i]->getDescription();
-			} else {
+			}
+			else
+			{
 				$i++;
 			}
 		}
@@ -69,35 +84,56 @@ class JobPositionDAO implements IntfJobPositionDAO {
 		return $title;
 	}
 
-	private function retrieveData() {
-
-		$ch = curl_init("https://utn-students-api.herokuapp.com/api/JobPosition");
-		$fp = fopen("Data/jobPositions.json", "w");
-
-		curl_setopt($ch, CURLOPT_FILE, $fp);
-		curl_setopt($ch, CURLOPT_HTTPHEADER, array("x-api-key: 4f3bceed-50ba-4461-a910-518598664c08"));
-
-		curl_exec($ch);
-		curl_close($ch);
-		fclose($fp);
+	private function retrieveData()
+	{
 
 		$this->jobPositionList = array();
+		$curl = curl_init();
 
-		if (file_exists('Data/jobPositions.json')) {
-			$jsonContent = file_get_contents('Data/jobPositions.json');
+		curl_setopt($curl, CURLOPT_URL, 'https://utn-students-api.herokuapp.com/api/JobPosition');
+		curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+		curl_setopt($curl, CURLOPT_HTTPHEADER, array('x-api-key: 4f3bceed-50ba-4461-a910-518598664c08'));
 
-			$arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
+		$data = curl_exec($curl);
 
-			foreach ($arrayToDecode as $valuesArray) {
+		curl_close($curl);
 
-				$jobPosition = new JobPosition();
+		$arrayToDecode = ($data) ? json_decode($data, true) : array();
 
-				$jobPosition->setId_jobPosition($valuesArray['jobPositionId']);
-				$jobPosition->setId_career($valuesArray['careerId']);
-				$jobPosition->setDescription($valuesArray['description']);
+		if ($arrayToDecode === null) /* si no puede armar el array por JSON utilizo el backup */
+        {
+            $arrayToDecode = $this->useBackup();
+        }
+        else /* Si hay datos actualizo el backup */
+        {
+            $jsonContent = json_encode($arrayToDecode, JSON_PRETTY_PRINT);
 
-				array_push($this->jobPositionList, $jobPosition);
-			}
+            file_put_contents(API_BACKUP_PATH . 'jobPositions.json', $jsonContent);
+        }
+
+
+		foreach ($arrayToDecode as $valuesArray)
+		{
+
+			$jobPosition = new JobPosition();
+
+			$jobPosition->setId_jobPosition($valuesArray['jobPositionId']);
+			$jobPosition->setId_career($valuesArray['careerId']);
+			$jobPosition->setDescription($valuesArray['description']);
+
+			array_push($this->jobPositionList, $jobPosition);
 		}
 	}
+
+	public function useBackup()
+    {
+        if (file_exists(API_BACKUP_PATH . 'jobPositions.json'))
+        {
+            $jsonContent = file_get_contents(API_BACKUP_PATH . 'jobPositions.json');
+
+            $arrayToDecode = ($jsonContent) ? json_decode($jsonContent, true) : array();
+        }
+
+        return $arrayToDecode;
+    }
 }

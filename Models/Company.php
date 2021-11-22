@@ -11,6 +11,7 @@ class Company {
 	private $description;
 	private $link;
 	private $active;
+	private $img_path;
 
 	public function __construct() {
 	}
@@ -77,5 +78,15 @@ class Company {
 	public function setLink($link)
 	{
 		$this->link = $link;
+	}
+
+	public function getImg_path()
+	{
+		return $this->img_path;
+	}
+  
+	public function setImg_path($img_path)
+	{
+		$this->img_path = $img_path;
 	}
 }

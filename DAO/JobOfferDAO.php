@@ -47,7 +47,8 @@ class JobOfferDAO implements IntfJobOfferDAO
         $connection = Connection::GetInstance();
         $queryResult = $connection->Execute($query);
 
-        foreach ($queryResult as $queryResult) {
+        foreach ($queryResult as $queryResult)
+        {
 
             $jobOffer = new JobOffer();
 
@@ -68,7 +69,8 @@ class JobOfferDAO implements IntfJobOfferDAO
 
     public function find(JobOffer $jobOffer)
     {
-        try {
+        try
+        {
             $query = "SELECT * FROM " . $this->tableName . " WHERE id_company = :id_company AND id_job_position = :id_job_position ";
 
             $parameters['id_company'] = $jobOffer->getId_company();
@@ -77,7 +79,9 @@ class JobOfferDAO implements IntfJobOfferDAO
             $connection = Connection::GetInstance();
 
             $queryResult = $connection->Execute($query, $parameters);
-        } catch (Exception $ex) {
+        }
+        catch (Exception $ex)
+        {
             $this->showErrorMsg($ex);
             return null;
         }
@@ -91,7 +95,8 @@ class JobOfferDAO implements IntfJobOfferDAO
         $output = '';
         $query = "SELECT * FROM " . $this->tableName;
         $result = mysqli_query($connect, $query);
-        if (mysqli_num_rows($result) > 0) {
+        if (mysqli_num_rows($result) > 0)
+        {
             $output .= '
         <table class="table" bordered="1">  
                     <tr>  
@@ -105,7 +110,8 @@ class JobOfferDAO implements IntfJobOfferDAO
                         <th>Posicion de Trabajo</th>
                     </tr>
             ';
-            while ($row = mysqli_fetch_array($result)) {
+            while ($row = mysqli_fetch_array($result))
+            {
                 $remote = $row["remote"] == '1' ? 'Yes' : 'No';
                 $active = $row["active"] == '1' ? 'Active' : 'Inactive';
                 $company = $this->companyDAO->getCompanyById($row["id_company"]);
@@ -129,16 +135,14 @@ class JobOfferDAO implements IntfJobOfferDAO
             header('Content-Disposition: attachment; filename=utn-job-offers.xls');
             echo $output;
         }
-        else {
+        else
+        {
             echo '
                <div class="alert alert-warning alert-dismissible fade show" role="alert">
 			 No hay ofertas que descargar.
 			 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-	  	</div>';
-            require_once(VIEWS_PATH . 'job-offer-list.php');
+	  	    </div>';
         }
-
-        exit;
     }
 
     public function getAllActivesByCareer($id_career)
@@ -208,6 +212,38 @@ class JobOfferDAO implements IntfJobOfferDAO
         $jobOffer->setRemote(($queryResult['remote'] !== "0") ? true : false);
         $jobOffer->setActive(($queryResult['active'] !== "0") ? true : false);
     }
+
+    public function update(JobOffer $jobOffer){
+
+        try{
+
+            $query = "UPDATE " . $this->tableName .
+                    " SET
+                        title = :title,
+                        description = :description,
+                        remote = :remote,
+                        active = :active 
+                    WHERE id_job_offer = :id_job_offer";
+    
+            $parameters['id_job_offer'] = $jobOffer->getId_jobOffer();
+            $parameters['title'] = $jobOffer->getTitle();
+            $parameters['description'] = $jobOffer->getDescription();
+            $parameters['remote'] = $jobOffer->getRemote();
+            $parameters['active'] = $jobOffer->getActive();
+    
+            $connection = Connection::GetInstance();
+    
+            $connection->ExecuteNonQuery($query, $parameters);
+
+            return true;
+        }
+        catch(Exception $ex)
+        {
+            return false;
+        }
+
+    }
+
     private function showErrorMsg(Exception $ex)
     {
         echo '<script>console.log("Hubo un problema con la base de datos' . $ex->getMessage() . '"); </script>';

@@ -13,7 +13,8 @@ CREATE TABLE companies(
 	company_role varchar(100),
 	description varchar(1000),
 	link varchar(100),
-	active BOOL NOT NULL 
+	active BOOL NOT NULL,
+	img_path varchar(100)
 );
 
 CREATE TABLE users(
@@ -21,7 +22,7 @@ CREATE TABLE users(
 	username varchar(30) UNIQUE ,
 	password varchar(300) NOT NULL ,
 	security_answer varchar(300) NOT NULL ,
-	user_type enum('admin','student') NOT NULL
+	user_type enum('admin','student','company') NOT NULL
 );
 
 CREATE TABLE job_offers(

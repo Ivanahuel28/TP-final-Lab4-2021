@@ -13,6 +13,8 @@ use Models\User;
 class HomeController
 {
     private $jobOfferDAO;
+    private $studentDAO;
+    private $companyDAO;
 
     public function __construct()
     {
@@ -24,19 +26,27 @@ class HomeController
     public function Index($message = "")
     {
 
-        if ($_SESSION['user'])
+        if (isset($_SESSION['user']))
         {
-            if ($_SESSION['user']->getUserType() === "admin")
+            switch ($_SESSION['user']->getUserType())
             {
-                $this->renderAdminHome();
-            }
-            else
-            {
-                $this->renderStudentHome();
+                case "company":
+                    $this->renderCompanyHome();
+                    break;
+                case "student":
+                    $this->renderStudentHome();
+                    break;
+                case "admin":
+                    $this->renderAdminHome();
+                    break;
+                default:
+                    header('Location: Session/renderLoginView');
+                    break;
             }
         }
         else
         {
+
             header('Location: Session/renderLoginView');
         }
     }
@@ -49,19 +59,18 @@ class HomeController
 
         $jobOfferList = $this->jobOfferDAO->getAllActivesByCareer($student->getCareerId());
 
-        foreach ($jobOfferList as $jobOffer) {
+        foreach ($jobOfferList as $jobOffer)
+        {
 
             $company = new Company();
 
             $company = $this->companyDAO->getById($jobOffer->getId_company());
-            
+
             $list[$jobOffer->getId_jobOffer()] = array(
                 'title' => $jobOffer->getTitle(),
                 'companyName' => $company->getName()
             );
         }
-
-        /* title, company name*/
 
         require_once(VIEWS_PATH . 'student-home.php');
     }
@@ -69,6 +78,14 @@ class HomeController
     public function renderAdminHome()
     {
         require_once(VIEWS_PATH . 'admin-home.php');
+    }
+
+    public function renderCompanyHome()
+    {
+        $company = new Company();
+        $company =  $this->companyDAO->getByCuit($_SESSION['user']->getUsername());
+
+        require_once(VIEWS_PATH . 'company-home.php');
     }
 
     public function renderRegisterUser()
