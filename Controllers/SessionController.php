@@ -48,6 +48,7 @@ class SessionController
                     $this->setSessionAndRedirect($user);
                     break;
                 default:
+                    $this->rejectLogin("Usuario o contraseña incorrectos");
                     break;
             }
         }

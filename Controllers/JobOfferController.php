@@ -12,6 +12,9 @@ use Models\JobOffer;
 use Models\JobPosition;
 use Exception;
 use Models\Application;
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+
 
 class JobOfferController
 {
@@ -128,18 +131,14 @@ class JobOfferController
 
     public function adminRequestJobOfferDetails($id_jobOffer)
     {
-        
-        $jobOffer = new JobOffer();
-        
-        $jobOffer = $this->jobOfferDAO->getById($id_jobOffer);
-        
-        $company = $this->companyDAO->getById($jobOffer->getId_company());
-        
-        $jobPositionTitle = $this->jobPositionDAO->getTitleById($jobOffer->getId_jobPosition());
-        
-        $applicationList = $this->applicationDAO->getApplyListByJobOffer($id_jobOffer);
 
-        
+        $jobOffer = new JobOffer();
+
+        $jobOffer = $this->jobOfferDAO->getById($id_jobOffer);
+
+        $company = $this->companyDAO->getById($jobOffer->getId_company());
+
+        $jobPositionTitle = $this->jobPositionDAO->getTitleById($jobOffer->getId_jobPosition());
 
         require_once(VIEWS_PATH . 'job-offer-detail.php');
     }
@@ -150,16 +149,6 @@ class JobOfferController
 
         $this->renderJobOfferList();
     }
-
-    /* public function searchStudent()
-    {
-        $this->renderSearchStudent();
-    } */
-
-    /* public function searchStudent()
-    {
-        $this->renderSearchStudent();
-    } */
 
     public function studentRequestApply($id_jobOffer, $file)
     {
@@ -230,7 +219,6 @@ class JobOfferController
         return $jobOffer;
     }
 
-
     public function adminRequestJobOfferEdit($id_jobOffer, $title, $description, $isRemote = "", $active = "")
     {
         $id_jobOffer = (int)$id_jobOffer;
@@ -253,6 +241,105 @@ class JobOfferController
         }
 
         $this->renderJobOfferList();
+    }
+
+    public function requestConcludeJobOffer($id_jobOffer)
+    {
+        // cambio el estado de la oferta y lo guardo
+        $jobOffer = new JobOffer();
+        $jobOffer = $this->jobOfferDAO->getById((int)$id_jobOffer);
+
+        if ($jobOffer->getActive())
+        {
+
+            $jobOffer->setActive(false);
+            $this->jobOfferDAO->update($jobOffer);
+
+            $emails = $this->applicationDAO->getEmailsByJobOfferId((int)$id_jobOffer);
+
+            $company = new Company();
+            $company = $this->companyDAO->getById($jobOffer->getId_company());
+
+            $jobPosition = new JobPosition();
+            $jobPosition = $this->jobPositionDAO->getById($jobOffer->getId_jobPosition());
+
+
+            if ($emails)
+            {
+                $emailFlag = $this->sendEmails(
+                    $emails,
+                    $jobOffer->getTitle(),
+                    $company->getName(),
+                    $jobPosition->getDescription(),
+                    $jobOffer->getDescription(),
+                );
+                if ($emailFlag)
+                    $this->printAlertMessageOnTop("success", "Propuesta concluida y correos enviados", "Felicitaciones!");
+                else
+                    $this->printAlertMessageOnTop("danger", "Los correos no pudieron ser enviados", "Error!");
+            }
+            else
+                $this->printAlertMessageOnTop("warning", "No existen postulaciones a esta oferta", "Atencion!");
+        }
+        else
+            $this->printAlertMessageOnTop("warning", "La oferta se encuentra inactiva", "Atencion!");
+
+        $this->adminRequestJobOfferDetails((int)$id_jobOffer);
+    }
+
+    private function sendEmails($emailsArray,$jobOfferTitle = "",$companyName= "",$jobPosition= "",$description= "")
+    {
+        require 'PHPMailer/Exception.php';
+        require 'PHPMailer/PHPMailer.php';
+        require 'PHPMailer/SMTP.php';
+        require 'PHPMailer/Credentials.php'; /* Crear este archivo con las variables EMAIL, PASS, VERIFY_EMAIL */
+        $mail = new PHPMailer(true);
+
+        try
+        {
+            //Server settings
+            $mail->SMTPDebug = 0;                      //Enable verbose debug output
+            $mail->isSMTP();                                            //Send using SMTP
+            $mail->Host       = 'smtp.gmail.com';                     //Set the SMTP server to send through
+            $mail->SMTPAuth   = true;                                   //Enable SMTP authentication
+            $mail->Username   = EMAIL;                     //SMTP username
+            $mail->Password   = PASS;                               //SMTP password
+            $mail->SMTPSecure = 'tls';            //Enable implicit TLS encryption
+            $mail->Port       = 587;                                    //TCP port to connect to; use 587 if you have set `SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS`
+
+            //Recipients
+            $mail->setFrom(EMAIL);
+            $mail->addAddress(VERIFY_EMAIL);     // Correo de verificacion
+
+            foreach ($emailsArray as $email)
+            {
+                $mail->addAddress($email);     //Add a recipient
+            }
+
+            //Content
+            $mail->isHTML(true);                                  //Set email format to HTML
+            $mail->Subject = 'Oferta "'.$jobOfferTitle.'" concluida';
+            $mail->Body    = '<p>La siguiente oferta en la que usted estaba potulad@ ha concluido : </p>'
+            . '<br>' .
+            '<h5> '.$jobOfferTitle. '</h5>' .
+            '<br>' .
+            '<p>Empresa : '.$companyName. '</p>' .
+            '<br>' .
+            '<p>Posicion : '.$jobPosition. '</p>' .
+            '<br>' .
+            '<p>Descripcion : '.$description. '</p>' .
+            '<br>'.
+            '<p>Gracias por participar - UTN FR Mar del Plata</p>'
+            ;
+
+            $mail->send();
+            
+            return true;
+        }
+        catch (Exception $e)
+        {
+            return false;
+        }
     }
 
     private function printAlertAlreadyExist()

@@ -15,7 +15,11 @@ require_once('nav.php');
 
         <div class="px-5 my-3">
             <img width="200" id="blah" src="<?php echo $imgSrc ?>" alt="your image" />
-            <h3><?php echo $jobOffer->getTitle() ?></h3>
+            <br>
+            <div class="d-inline-flex p-2 bd-highlight">
+                <h3><?php echo $jobOffer->getTitle() ?></h3>
+                <button type="button" class="btn btn-<?php echo $jobOffer->getActive() ? "success" : "danger" ?> ms-4"><?php echo $jobOffer->getActive() ? "ACTIVA" : "INACTIVA" ?></button>
+            </div>
         </div>
         <hr class="">
         <p class="fs-5 col-md-8">Empresa: <?php echo $company->getName() ?></p>
@@ -35,7 +39,7 @@ require_once('nav.php');
 
             <div class="form-group d-flex justify-content-start">
                 <div class="mb-5">
-                    <a name="action" onclick="history.back()" type="submit" class="btn btn-secondary btn-lg mx-3 px-4">Volver</a>
+                    <a href="<?php echo FRONT_ROOT ?>Home/Index" class="btn btn-secondary btn-lg mx-3 px-4">Volver</a>
                 </div>
                 <div class="mb-5">
                     <button type="submit" class="btn btn-success btn-lg px-4">Aplicar</button>
@@ -48,14 +52,14 @@ require_once('nav.php');
 
             <div class="form-group d-flex justify-content-start">
                 <div class="mb-5">
-                    <a name="action" onclick="history.back()" type="submit" class="btn btn-secondary btn-lg mx-3 px-4">Volver</a>
+                    <a href="<?php echo FRONT_ROOT ?>JobOffer/renderJobOfferList" class="btn btn-secondary btn-lg mx-3 px-4">Volver</a>
                 </div>
-                <!-- <div class="mb-5">
-                    <a href="<?php echo FRONT_ROOT ?>Application/executeDownloadApplicants" class="btn btn-success btn-lg px-4">Descargar Postulantes</a>
-                </div> -->
+                <div class="mb-5">
+                    <a href="<?php echo FRONT_ROOT ?>JobOffer/requestConcludeJobOffer/<?php echo $jobOffer->getId_jobOffer() ?>" class="btn btn-success btn-lg px-4">Concluir Oferta</a>
+                </div>
             </div>
 
-            <div class="container">
+            <!-- <div class="container">
                 <h3 class="">Listado de postulantes: </h3>
             </div>
 
@@ -80,12 +84,12 @@ require_once('nav.php');
                             </div>
                             <div class="my-auto ms-auto mx-3">
 
-                                <!-- <a type="button" href="<?php echo FRONT_ROOT ?>JobOffer/executeDeleteApplication/<?php echo $company->getCuit() ?>" class="btn btn-outline-danger">
+                                <a type="button" href="<?php echo FRONT_ROOT ?>JobOffer/executeDeleteApplication/<?php echo $company->getCuit() ?>" class="btn btn-outline-danger">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x-square-fill" viewBox="0 0 16 16">
                                         <path d="M2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2zm3.354 4.646L8 7.293l2.646-2.647a.5.5 0 0 1 .708.708L8.707 8l2.647 2.646a.5.5 0 0 1-.708.708L8 8.707l-2.646 2.647a.5.5 0 0 1-.708-.708L7.293 8 4.646 5.354a.5.5 0 1 1 .708-.708z"></path>
                                     </svg>
                                     Eliminar
-                                </a> -->
+                                </a>
                             </div>
                         </div>
                     <?php }
@@ -99,7 +103,7 @@ require_once('nav.php');
                     </div>
                 <?php
                 } ?>
-            </div>
+            </div> -->
 
         <?php
         } ?>

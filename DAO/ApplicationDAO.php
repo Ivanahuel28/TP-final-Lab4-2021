@@ -11,11 +11,14 @@ class ApplicationDAO implements IntfApplicationDAO
 {
 
     private $tableName = "applications";
-
     private $connection;
+
+    private $userDAO;
+
 
     public function __construct()
     {
+        $this->userDAO = new UserDAO();
     }
 
     public function add(Application $application)
@@ -87,34 +90,37 @@ class ApplicationDAO implements IntfApplicationDAO
         }
     }
 
-    public function getApplyListByJobOffer($id_jobOffer)
+    public function getEmailsByJobOfferId($id_jobOffer)
     {
-
-        $applicationList = array();
-        $query = "SELECT * FROM " . $this->tableName . ' WHERE id_job_offer = :id_job_offer';
-        $connection = Connection::GetInstance();
-
-        $parameters['id_job_offer'] = $id_jobOffer;
-        $queryResult = $connection->Execute($query, $parameters);
-
-        if ($queryResult)
+        try
         {
-            foreach ($queryResult as $row)
+            $query = "SELECT id_user FROM " . $this->tableName . ' WHERE id_job_offer = :id_job_offer';
+            $connection = Connection::GetInstance();
+            $parameters['id_job_offer'] = $id_jobOffer;
+            $queryResult = $connection->Execute($query, $parameters);
+            
+            $idList = array();
+            if ($queryResult)
             {
-
-                $application = new Application();
-
-                $application->setId_application((int)$row['id_application']);
-                $application->setId_user((int)$row['id_user']);
-                $application->setId_jobOffer((int)$row['id_job_offer']);
-                $application->setDate($row['application_datetime']);
-                $application->setFilePath($row['file_path']);
-
-                array_push($applicationList, $application);
+                foreach ($queryResult as $row)
+                {
+                    array_push($idList, (int)$row['id_user']);
+                }
             }
+
+            if ($idList) {
+                $emails = $this->userDAO->getUsernamesByIdList($idList);
+                
+            } else {
+                return null;
+            }
+            
+
+        }
+        catch(Exception $e){
+            $emails = null;
         }
 
-
-        return $applicationList;
+        return $emails;
     }
 }
